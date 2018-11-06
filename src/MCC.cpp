@@ -64,7 +64,7 @@ void MCC::update()
 	}
 	case ST_FINISHED:
 	{
-		destroy();
+		//destroy();
 		break;
 	}
 	}
