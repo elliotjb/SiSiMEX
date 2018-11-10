@@ -129,9 +129,7 @@ bool MCC::registerIntoYellowPages()
 	pckMCC.Write(stream);
 
 	// TODO: Send the stream (Agent::sendPacketToYellowPages)
-	Agent::sendPacketToYellowPages(stream);
-
-	return true;
+	return Agent::sendPacketToYellowPages(stream);
 }
 
 bool MCC::unregisterFromYellowPages()
@@ -151,7 +149,5 @@ bool MCC::unregisterFromYellowPages()
 	pckMCC.Write(stream);
 
 	// TODO: Send the stream (Agent::sendPacketToYellowPages)
-	Agent::sendPacketToYellowPages(stream);
-
-	return true;
+	return Agent::sendPacketToYellowPages(stream);
 }
