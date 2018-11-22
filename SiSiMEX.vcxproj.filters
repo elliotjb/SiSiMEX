@@ -78,14 +78,11 @@
     <ClCompile Include="src\net\SocketAddress.cpp">
       <Filter>Archivos de origen\net</Filter>
     </ClCompile>
-    <ClCompile Include="src\Globals.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Item.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="src\Node.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UCP.cpp">
+      <Filter>Archivos de origen\agents</Filter>
     </ClCompile>
     <ClCompile Include="src\net\MemoryStream.cpp">
       <Filter>Archivos de origen\net</Filter>
@@ -117,10 +114,22 @@
     <ClCompile Include="src\MCC.cpp">
       <Filter>Archivos de origen\agents</Filter>
     </ClCompile>
+    <ClCompile Include="src\MCP.cpp">
+      <Filter>Archivos de origen\agents</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UCC.cpp">
+      <Filter>Archivos de origen\agents</Filter>
+    </ClCompile>
     <ClCompile Include="src\ModuleAgentContainer.cpp">
       <Filter>Archivos de origen\modules</Filter>
     </ClCompile>
     <ClCompile Include="src\ModuleNodeCluster.cpp">
+      <Filter>Archivos de origen\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ItemList.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModuleTextures.cpp">
       <Filter>Archivos de origen\modules</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,9 +182,6 @@
     <ClInclude Include="src\Globals.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\Item.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="src\Node.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -189,6 +195,15 @@
       <Filter>Archivos de encabezado\agents</Filter>
     </ClInclude>
     <ClInclude Include="src\MCC.h">
+      <Filter>Archivos de encabezado\agents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MCP.h">
+      <Filter>Archivos de encabezado\agents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UCC.h">
+      <Filter>Archivos de encabezado\agents</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UCP.h">
       <Filter>Archivos de encabezado\agents</Filter>
     </ClInclude>
     <ClInclude Include="src\net\ByteSwap.h">
@@ -225,6 +240,12 @@
       <Filter>Archivos de encabezado\modules</Filter>
     </ClInclude>
     <ClInclude Include="src\ModuleNodeCluster.h">
+      <Filter>Archivos de encabezado\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ItemList.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModuleTextures.h">
       <Filter>Archivos de encabezado\modules</Filter>
     </ClInclude>
   </ItemGroup>

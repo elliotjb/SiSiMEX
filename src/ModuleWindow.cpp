@@ -19,7 +19,7 @@ const char *windowTitle = "SiSiMEX";
 static WNDCLASSEX wc;                                // Window class
 static HWND hwnd = NULL;                             // Window handle
 static LPDIRECT3D9 pD3D;                             // Direct3d9 pointer
-static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL; // Direct3d9 device pointer
+LPDIRECT3DDEVICE9        g_pd3dDevice = NULL; // Direct3d9 device pointer
 static D3DPRESENT_PARAMETERS    g_d3dpp;             // Direct3d9 parameters
 static MSG msg;                                      // Window message
 

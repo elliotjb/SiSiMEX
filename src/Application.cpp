@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleTextures.h"
 #include "ModuleNetworkManager.h"
 #include "ModuleAgentContainer.h"
 #include "ModuleMainMenu.h"
@@ -17,9 +18,10 @@ Application::Application()
 {
 	// Create modules
 	ADD_MODULE(ModuleWindow, modWindow);
+	ADD_MODULE(ModuleLogView, modLogView);
+	ADD_MODULE(ModuleTextures, modTextures);
 	ADD_MODULE(ModuleNetworkManager, networkManager);
 	ADD_MODULE(ModuleAgentContainer, agentContainer);
-	ADD_MODULE(ModuleLogView, modLogView);
 	ADD_MODULE(ModuleMainMenu, modMainMenu);
 	ADD_MODULE(ModuleNodeCluster, modNodeCluster);
 	ADD_MODULE(ModuleYellowPages, modYellowPages);
@@ -44,6 +46,7 @@ bool Application::init()
 
 	// Set active modules (calls start() on them)
 	modWindow->setEnabled(true);
+	modTextures->setEnabled(true);
 	networkManager->setEnabled(true);
 	modMainMenu->setEnabled(true);
 	modLogView->setEnabled(true);

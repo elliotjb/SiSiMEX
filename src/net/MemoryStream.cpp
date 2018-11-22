@@ -1,6 +1,7 @@
 #include "MemoryStream.h"
 #include <cstdlib>
 #include <algorithm> // std::max
+#include <cassert>
 
 void OutputMemoryStream::Write(const void *inData, size_t inByteCount)
 {
@@ -21,19 +22,14 @@ void OutputMemoryStream::Write(const void *inData, size_t inByteCount)
 void OutputMemoryStream::ReallocBuffer(uint32_t inNewLength)
 {
 	mBuffer = static_cast<char*>(std::realloc(mBuffer, inNewLength));
-	// TODO: handle realloc failure
+	assert(mBuffer != nullptr && "OutputMemoryStream::ReallocBuffer() - std::realloc() failed.");
 	mCapacity = inNewLength;
 }
 
 void InputMemoryStream::Read(void *outData, size_t inByteCount)
 {
 	uint32_t resultHead = mHead + static_cast<uint32_t>(inByteCount);
-	if (resultHead > mCapacity)
-	{
-		// TODO: handle error, no data to read
-		
-	}
-
+	assert(resultHead <= mCapacity && "InputMemoryStream::Read() - trying to read more data than available.");
 	std::memcpy(outData, mBuffer + mHead, inByteCount);
 	mHead = resultHead;
 }

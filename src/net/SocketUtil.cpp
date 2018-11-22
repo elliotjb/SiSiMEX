@@ -101,6 +101,29 @@ fd_set* SocketUtil::FillSetFromVector(fd_set& outSet, const std::vector< TCPSock
 	}
 }
 
+fd_set* SocketUtil::FillSetFromVectorRange(fd_set& outSet, const std::vector< TCPSocketPtr >* inSockets, int& ioNaxNfds, int begin, int end)
+{
+	if (inSockets)
+	{
+		int i = begin;
+		FD_ZERO(&outSet);
+		for (unsigned int i = begin; i < end && i < inSockets->size(); ++i)
+		{
+			const TCPSocketPtr &socket((*inSockets)[i]);
+
+			FD_SET(socket->mSocket, &outSet);
+#if !_WIN32
+			ioNaxNfds = std::max(ioNaxNfds, socket->mSocket);
+#endif
+		}
+		return &outSet;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 void SocketUtil::FillVectorFromSet(std::vector< TCPSocketPtr >* outSockets, const std::vector< TCPSocketPtr >* inSockets, const fd_set& inSet)
 {
 	if (inSockets && outSockets)
@@ -115,6 +138,78 @@ void SocketUtil::FillVectorFromSet(std::vector< TCPSocketPtr >* outSockets, cons
 		}
 	}
 }
+
+void SocketUtil::AddToVectorFromSetRange(std::vector<TCPSocketPtr>* outSockets, const std::vector<TCPSocketPtr>* inSockets, const fd_set & inSet, int begin, int end)
+{
+	if (inSockets && outSockets)
+	{
+		for (unsigned int i = begin; i < end && i < inSockets->size(); ++i)
+		{
+			const TCPSocketPtr &socket((*inSockets)[i]);
+
+			if (FD_ISSET(socket->mSocket, &inSet))
+			{
+				outSockets->push_back(socket);
+			}
+		}
+	}
+}
+
+#if 1
+
+int SocketUtil::Select(const std::vector< TCPSocketPtr >* inReadSet,
+	std::vector< TCPSocketPtr >* outReadSet,
+	const std::vector< TCPSocketPtr >* inWriteSet,
+	std::vector< TCPSocketPtr >* outWriteSet,
+	const std::vector< TCPSocketPtr >* inExceptSet,
+	std::vector< TCPSocketPtr >* outExceptSet,
+	int timeoutMillis)
+{
+	// Maximum number of sockets supported by select()
+#	define MAX_SOCKETS 64
+
+	int toRet = 0;
+
+	//build up some sets from our vectors
+	fd_set read, write, except;
+
+	int begin = 0;
+	bool finished = false;
+
+	do
+	{
+		int nfds = 0;
+
+		fd_set *readPtr = FillSetFromVectorRange(read, inReadSet, nfds, begin, begin + MAX_SOCKETS);
+		fd_set *writePtr = FillSetFromVectorRange(write, inWriteSet, nfds, begin, begin + MAX_SOCKETS);
+		fd_set *exceptPtr = FillSetFromVectorRange(except, inExceptSet, nfds, begin, begin + MAX_SOCKETS);
+
+		struct timeval timeout;
+		timeout.tv_sec = 0;
+		timeout.tv_usec = timeoutMillis * 1000;
+
+		toRet = select(nfds + 1, readPtr, writePtr, exceptPtr, &timeout);
+
+		if (toRet > 0)
+		{
+			AddToVectorFromSetRange(outReadSet, inReadSet, read, begin, begin + 64);
+			AddToVectorFromSetRange(outWriteSet, inWriteSet, write, begin, begin + 64);
+			AddToVectorFromSetRange(outExceptSet, inExceptSet, except, begin, begin + 64);
+		}
+
+		begin += MAX_SOCKETS;
+
+		finished =
+			(inReadSet == nullptr || begin >= inReadSet->size()) &&
+			(inWriteSet == nullptr || begin >= inWriteSet->size()) &&
+			(inExceptSet == nullptr || begin >= inExceptSet->size());
+	}
+	while (!finished);
+
+	return toRet;
+}
+
+#else
 
 int SocketUtil::Select(const std::vector< TCPSocketPtr >* inReadSet,
 	std::vector< TCPSocketPtr >* outReadSet,
@@ -135,7 +230,7 @@ int SocketUtil::Select(const std::vector< TCPSocketPtr >* inReadSet,
 
 	struct timeval timeout;
 	timeout.tv_sec = 0;
-	timeout.tv_usec = timeoutMillis*1000;
+	timeout.tv_usec = timeoutMillis * 1000;
 
 	int toRet = select(nfds + 1, readPtr, writePtr, exceptPtr, &timeout);
 
@@ -148,3 +243,5 @@ int SocketUtil::Select(const std::vector< TCPSocketPtr >* inReadSet,
 
 	return toRet;
 }
+
+#endif

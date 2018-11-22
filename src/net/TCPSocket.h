@@ -22,8 +22,9 @@ public:
 	int SetNonBlockingMode(bool inShouldBeNonBlocking);
 	int SetReuseAddress(bool inShouldReuseAddress);
 
-	bool IsListening() const { return mListening; }
-	bool IsDisconnected() const { return mDisconnected; }
+	bool IsListening() const { return mFlags & FlagListening; }
+	bool ToDisconnect() const { return mFlags & FlagToDisconnect; }
+	bool IsDisconnected() const { return mFlags & FlagDisconnected; }
 	const SocketAddress &RemoteAddress() { return mRemoteAddress; }
 
 	// Use these methods instead of Send / Receive in conjunction with
@@ -41,17 +42,25 @@ private:
 
 	friend class SocketUtil;
 
+	// Only the network manager can call this explicitly
+	friend class TCPNetworkManager;
+	void CloseSocket();
+
 	TCPSocket(SOCKET inSocket) :
 		mSocket(inSocket),
-		mListening(false),
-		mDisconnected(false),
+		mFlags(0),
 		mOutgoingDataHead(0), mOutgoingDataSendHead(0),
 		mIncomingDataHead(0), mIncomingDataRecvHead(0)
 	{ }
 
+	enum Flag {
+		FlagListening    = 1,
+		FlagDisconnected = 2,
+		FlagToDisconnect = 4
+	};
+
 	SOCKET mSocket;
-	bool mListening;
-	bool mDisconnected;
+	int mFlags;
 	SocketAddress mRemoteAddress;
 
 	// Data to be sent

@@ -1,5 +1,5 @@
 #pragma once
-#include "Item.h"
+#include "ItemList.h"
 #include <memory>
 
 class Node
@@ -9,9 +9,6 @@ public:
 	// Constructor and destructor
 	Node(int id);
 	~Node();
-
-	// Initialization of its item list
-	void initialize();
 
 	// Getters
 	int id() { return _id; }

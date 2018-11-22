@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ModuleNetworkManager.h"
+#include "imgui/imgui.h"
 
 
 bool ModuleNetworkManager::init()
@@ -35,4 +36,14 @@ bool ModuleNetworkManager::cleanUp()
 	SocketUtil::CleanUp();
 
 	return true;
+}
+
+void ModuleNetworkManager::drawInfoGUI()
+{
+	if (ImGui::CollapsingHeader("ModuleNetworkManager", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		int socketsCount = TCPNetworkManager::allSockets().size();
+
+		ImGui::TextWrapped("# active sockets: %d", socketsCount);
+	}
 }

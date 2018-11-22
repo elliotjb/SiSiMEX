@@ -86,14 +86,22 @@ void TCPNetworkManager::HandleSocketOperations(int timeoutMillis)
 		}
 	}
 
-	// Remove disconnected sockets
+	// Handle socket disconnections
 	std::vector<TCPSocketPtr> connectedSockets;
-	for (auto socket : mSockets) {
-		if (!socket->IsDisconnected()) {
-			connectedSockets.push_back(socket);
+	for (auto socket : mSockets)
+	{
+		if (socket->ToDisconnect() && !socket->HasOutgoingData())
+		{
+			socket->CloseSocket();
 		}
-		else {
+
+		if (socket->IsDisconnected())
+		{
 			mDelegate->OnDisconnected(socket);
+		}
+		else
+		{
+			connectedSockets.push_back(socket);
 		}
 	}
 	mSockets.swap(connectedSockets);

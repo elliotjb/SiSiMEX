@@ -38,6 +38,9 @@ bool Agent::sendPacketToYellowPages(OutputMemoryStream &stream)
 	// Add socket to the network manager
 	App->networkManager->AddSocket(agentSocket);
 
+	// Add socket to the list of sockets of this agent
+	_sockets.push_back(agentSocket);
+
 	// Append data
 	agentSocket->SendPacket(stream.GetBufferPtr(), stream.GetSize());
 	return true;
@@ -64,6 +67,9 @@ bool Agent::sendPacketToAgent(const std::string &ip, uint16_t port, OutputMemory
 
 	// Add socket to the network manager
 	App->networkManager->AddSocket(agentSocket);
+
+	// Add socket to the list of sockets of this agent
+	_sockets.push_back(agentSocket);
 
 	// Append data
 	agentSocket->SendPacket(stream.GetBufferPtr(), stream.GetSize());

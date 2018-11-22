@@ -3,11 +3,7 @@
 
 TCPSocket::~TCPSocket()
 {
-#ifdef _WIN32
-	closesocket(mSocket);
-#else
-	close(mSocket);
-#endif
+	CloseSocket();
 }
 
 int TCPSocket::Bind(const SocketAddress &inBindAddress)
@@ -29,7 +25,7 @@ int TCPSocket::Listen(int inBackLog)
 		SocketUtil::ReportError("TCPSocket::Listen");
 		return -SocketUtil::GetLastError();
 	}
-	mListening = true;
+	mFlags |= FlagListening;
 	return NO_ERROR;
 }
 
@@ -71,7 +67,7 @@ int TCPSocket::Send(const void *inData, int inLen)
 		auto lastError = SocketUtil::GetLastError();
 		if (lastError != WSAEWOULDBLOCK && lastError != WSAEINPROGRESS) {
 			SocketUtil::ReportError("TCPSocket::Send");
-			mDisconnected = true;
+			mFlags |= FlagDisconnected;
 		}
 		return -lastError;
 	}
@@ -86,20 +82,20 @@ int TCPSocket::Receive(void *inBuffer, int inLen)
 		auto lastError = SocketUtil::GetLastError();
 		if (lastError != WSAEWOULDBLOCK && lastError != WSAEINPROGRESS) {
 			SocketUtil::ReportError("TCPSocket::Receive");
-			mDisconnected = true;
+			mFlags |= FlagDisconnected;
 		}
 		return -lastError;
 	}
 	if (bytesReceivedCount == 0)
 	{
-		mDisconnected = true;
+		mFlags |= FlagDisconnected;
 	}
 	return bytesReceivedCount;
 }
 
 void TCPSocket::Disconnect()
 {
-	mDisconnected = true; // Will be disconnected by the TCPNetworkManager
+	mFlags |= FlagToDisconnect;
 }
 
 int TCPSocket::SetNonBlockingMode(bool inShouldBeNonBlocking)
@@ -215,7 +211,7 @@ void TCPSocket::HandleOutgoingData()
 		}
 	}
 }
-#include<iostream>
+
 void TCPSocket::HandleIncomingData()
 {
 	// Resize incoming data buffer
@@ -227,5 +223,18 @@ void TCPSocket::HandleIncomingData()
 	const int recvBytes = Receive((void*)&mIncomingData[mIncomingDataRecvHead], size);
 	if (recvBytes > 0) {
 		mIncomingDataRecvHead += recvBytes;
+	}
+}
+
+void TCPSocket::CloseSocket()
+{
+	if ((mFlags & FlagDisconnected) == 0)
+	{
+#ifdef _WIN32
+		closesocket(mSocket);
+#else
+		close(mSocket);
+#endif
+		mFlags |= FlagDisconnected;
 	}
 }

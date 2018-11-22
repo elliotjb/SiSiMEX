@@ -18,4 +18,8 @@ public:
 	bool stop() override;
 
 	bool cleanUp() override;
+
+public:
+
+	void drawInfoGUI();
 };

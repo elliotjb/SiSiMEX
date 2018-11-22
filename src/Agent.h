@@ -1,11 +1,16 @@
 #pragma once
 #include "Globals.h"
 #include "Log.h"
-#include "Item.h"
 #include "Packets.h"
 #include "Node.h"
 #include <list>
 #include <memory>
+
+// Concrete agent declarations
+class MCC;
+class MCP;
+class UCC;
+class UCP;
 
 
 class Agent
@@ -21,11 +26,20 @@ public:
 
 	// Lifetime methods ///////////////////////////////////////////////
 	
-	virtual void start() = 0;  // Called after creating the agent
+	virtual void start() { }   // Called after creating the agent
 	
 	virtual void update() = 0; // Called once per frame
 
 	virtual void stop() = 0;   // Called before destroying the agent
+	
+							   
+	// Fast casts /////////////////////////////////////////////////////
+
+	virtual MCC* asMCC() { return nullptr; }
+	virtual MCP* asMCP() { return nullptr; }
+	virtual UCC* asUCC() { return nullptr; }
+	virtual UCP* asUCP() { return nullptr; }
+
 
 
 	// State machine //////////////////////////////////////////////////

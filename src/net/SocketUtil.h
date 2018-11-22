@@ -32,7 +32,9 @@ public:
 private:
 
 	static fd_set* FillSetFromVector(fd_set& outSet, const std::vector< TCPSocketPtr >* inSockets, int& ioNaxNfds);
+	static fd_set* FillSetFromVectorRange(fd_set& outSet, const std::vector< TCPSocketPtr >* inSockets, int& ioNaxNfds, int begin, int end);
 	static void FillVectorFromSet(std::vector< TCPSocketPtr >* outSockets, const std::vector< TCPSocketPtr >* inSockets, const fd_set& inSet);
+	static void AddToVectorFromSetRange(std::vector< TCPSocketPtr >* outSockets, const std::vector< TCPSocketPtr >* inSockets, const fd_set& inSet, int begin, int end);
 };
 
 #endif // SOCKET_UTIL_H

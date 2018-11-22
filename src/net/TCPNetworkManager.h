@@ -27,6 +27,10 @@ public:
 
 	void Finalize();
 
+protected:
+
+	const std::vector<TCPSocketPtr> &allSockets() const { return mSockets; }
+
 private:
 
 	TCPNetworkManagerDelegate *mDelegate;

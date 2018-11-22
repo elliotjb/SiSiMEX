@@ -10,10 +10,3 @@ Node::Node(int pid) :
 Node::~Node()
 {
 }
-
-
-void Node::initialize()
-{
-	// Initialize items
-	_itemList.randomInitialization();
-}

@@ -4,6 +4,7 @@
 #include "net/Net.h"
 #include "Node.h"
 #include "MCC.h"
+#include "MCP.h"
 
 class ModuleNodeCluster : public Module, public TCPNetworkManagerDelegate
 {
@@ -41,13 +42,13 @@ private:
 	void stopSystem();
 
 
-	void spawnMCC(int nodeId, int contributedItemId, int constraintItemId = NULL_ITEM_ID);
+	void spawnMCP(int nodeId, int requestedItemId, int contributedItemId);
+
+	void spawnMCC(int nodeId, int contributedItemId, int constraintItemId);
 
 
 
 	std::vector<NodePtr> _nodes; /**< Array of nodes spawn in this host. */
-
-	std::vector<MCC*> _mccs; /**< Multicast contributors. */
 
 	int state = 0; /**< State machine. */
 };
