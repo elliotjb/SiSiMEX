@@ -15,7 +15,7 @@ extern LPDIRECT3DDEVICE9 g_pd3dDevice; // CHAP: Direct3d9 device pointer, define
 
 bool ModuleTextures::init()
 {
-	banner = loadTexture("assets/banner.png");
+	banner = loadTexture("application/assets/banner.png");
 
 	return true;
 }

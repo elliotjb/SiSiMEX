@@ -27,6 +27,7 @@ enum class PacketType
 	// TODO
 	RequestItem,
 	RequestConstraint,
+	AcceptNegotiation,
 
 	Last
 };
@@ -147,6 +148,20 @@ public:
 
 // UCP <-> UCC
 // TODO
+class PacketAcceptNegotiation
+{
+public:
+	bool acceptedNegotiation;
+
+	void Read(InputMemoryStream &stream)
+	{
+		stream.Read(acceptedNegotiation);
+	}
+	void Write(OutputMemoryStream &stream)
+	{
+		stream.Write(acceptedNegotiation);
+	}
+};
 using PacketItemRequest = PacketRegisterMCC;
 
 using PacketConstraintRequest = PacketRegisterMCC;

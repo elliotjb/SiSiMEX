@@ -14,7 +14,7 @@ enum State
 	ST_WAITING_ACCEPTANCE,
 	ST_NEGOTIATING,
 
-	ST_NEGOTIATION_FINISHED
+	ST_NEGOTIATION_FINISHED = 10
 };
 
 MCP::MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsigned int searchDepth) :
@@ -24,6 +24,7 @@ MCP::MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsig
 	_searchDepth(searchDepth)
 {
 	setState(ST_INIT);
+	_negotiationAccepted = false;
 }
 
 MCP::~MCP()
@@ -52,7 +53,23 @@ void MCP::update()
 		break;
 
 	case ST_NEGOTIATING:
-
+		if (_ucp.get())
+		{
+			if (_ucp.get()->state() == 10)
+			{
+				if (_ucp.get()->NegotiationAccepted())
+				{
+					// Negotiation Accepted -------
+					_negotiationAccepted = true;
+				}
+				else
+				{
+					// Negotiation Canceled -------
+					_negotiationAccepted = false;
+				}
+				setState(ST_NEGOTIATION_FINISHED);
+			}
+		}
 		break;
 
 	default:;
@@ -90,6 +107,9 @@ void MCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 
 			// Store the returned MCCs from YP
 			_mccRegisters.swap(packetData.mccAddresses);
+			int her = _mccRegisters.size();
+			iLog << " - size: " << her;
+
 
 			// Select the first MCC to negociate
 			_mccRegisterIndex = 0;
@@ -144,7 +164,7 @@ bool MCP::negotiationFinished() const
 
 bool MCP::negotiationAgreement() const
 {
-	return false; // TODO: Did the child UCP find a solution?
+	return NegotiationAccepted(); // TODO: Did the child UCP find a solution?
 }
 
 bool MCP::Requestnegotiation()

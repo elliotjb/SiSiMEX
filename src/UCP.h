@@ -25,12 +25,17 @@ public:
 	// Getters
 	uint16_t requestedItemId() const { return _requestedItemId; }
 	uint16_t contributedItemId() const { return _contributedItemId; }
+	bool NegotiationAccepted() const { return _negotiationAccepted; }
 
 private:
 	uint16_t _requestedItemId;
 	uint16_t _contributedItemId;
 	unsigned int _searchDepth;
 
+	bool _negotiationAccepted;
+
 	AgentLocation _uccLocation;
+
+	MCPPtr _mcp; /**< Child MPC. */
 };
 

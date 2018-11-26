@@ -34,6 +34,7 @@ public:
 
 	// It returns the search depth of this MCP
 	unsigned int searchDepth() const { return _searchDepth; }
+	bool NegotiationAccepted() const { return _negotiationAccepted; }
 
 private:
 
@@ -50,6 +51,8 @@ private:
 	std::vector<AgentLocation> _mccRegisters; /**< MCCs returned by the YP. */
 
 	unsigned int _searchDepth;
+
+	bool _negotiationAccepted;
 
 	// TODO: Add extra attributes and methods?
 	UCPPtr _ucp; /**< Child UCP. */

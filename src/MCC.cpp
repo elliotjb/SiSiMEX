@@ -49,7 +49,22 @@ void MCC::update()
 		break;
 
 	case ST_NEGOTIATING:
-
+		if (_ucc.get())
+		{
+			if (_ucc.get()->state() == 10)
+			{
+				if (_ucc.get()->NegotiationAccepted())
+				{
+					// Negotiation Accepted -------
+					setState(ST_FINISHED);
+				}
+				else
+				{
+					// Negotiation Canceled -------
+					setState(ST_IDLE);
+				}
+			}
+		}
 		break;
 
 		// TODO: Handle other states

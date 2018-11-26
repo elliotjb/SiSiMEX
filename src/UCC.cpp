@@ -11,7 +11,7 @@ enum State
 	ST_RESOLVING_CONSTRAINT,
 	ST_SENDING_CONSTRAINT,
 	//
-	ST_FINISHED
+	ST_FINISHED = 10
 };
 
 UCC::UCC(Node *node, uint16_t contributedItemId, uint16_t constraintItemId) :
@@ -21,6 +21,7 @@ UCC::UCC(Node *node, uint16_t contributedItemId, uint16_t constraintItemId) :
 {
 	// TODO: Save input parameters
 	setState(ST_INIT);
+	_negotiationAccepted = false;
 }
 
 UCC::~UCC()
@@ -54,7 +55,7 @@ void UCC::stop()
 
 void UCC::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader, InputMemoryStream &stream)
 {
-	PacketType packetType = packetHeader.packetType;
+	const PacketType packetType = packetHeader.packetType;
 
 	switch (packetType)
 	{
@@ -67,26 +68,43 @@ void UCC::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 			PacketHeader packetHead;
 			packetHead.packetType = PacketType::RequestConstraint;
 			packetHead.srcAgentId = id();
-			packetHead.dstAgentId = packetHead.srcAgentId;
+			packetHead.dstAgentId = packetHeader.srcAgentId;
 
 			//PacketItemRequest packetData;
 			PacketConstraintRequest packetData;
 			packetData.itemId = constraintItemId();
 
 			// Serialize message
-			OutputMemoryStream stream;
-			packetHead.Write(stream);
-			packetData.Write(stream);
+			OutputMemoryStream outstream;
+			packetHead.Write(outstream);
+			packetData.Write(outstream);
 
-			socket->SendPacket(stream.GetBufferPtr(), stream.GetSize());
+			socket->SendPacket(outstream.GetBufferPtr(), outstream.GetSize());
 		}
 		else
 		{
-			wLog << "OnPacketReceived() - PacketType::RequestItem was unexpected.";
+			wLog << "UCC 1 - OnPacketReceived() - PacketType::RequestItem was unexpected.";
 
 		}
+		break;
+	case PacketType::AcceptNegotiation:
+	{
+		if (state() == ST_IDLE)
+		{
+			PacketAcceptNegotiation packetData;
+			packetData.Read(stream);
+
+			_negotiationAccepted = packetData.acceptedNegotiation;
+			setState(ST_FINISHED);
+		}
+		break;
+	}
 	default:
-		wLog << "OnPacketReceived() - Unexpected PacketType.";
+	{
+		int temp = (int)packetType;
+		wLog << "UCC 2 - OnPacketReceived() - Unexpected PacketType." << temp;
+		wLog << "UCC 2 - OnPacketReceived() - Unexpected PacketType.";
+	}
 	}
 }
 

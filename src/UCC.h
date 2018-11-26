@@ -22,9 +22,12 @@ public:
 	// Getters
 	uint16_t contributedItemId() const { return _contributedItemId; }
 	uint16_t constraintItemId() const { return _constraintItemId; }
+	bool NegotiationAccepted() const { return _negotiationAccepted; }
 
 private:
 	uint16_t _contributedItemId;
 	uint16_t _constraintItemId;
+
+	bool _negotiationAccepted;
 };
 
