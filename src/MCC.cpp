@@ -13,7 +13,7 @@ enum State
 	// TODO: Other states
 	ST_NEGOTIATING,
 
-	ST_FINISHED
+	ST_FINISHED = 10
 };
 
 MCC::MCC(Node *node, uint16_t contributedItemId, uint16_t constraintItemId) :

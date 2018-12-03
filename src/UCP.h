@@ -22,6 +22,8 @@ public:
 
 	bool SendPacketToUCC();
 
+	bool SendPacketToUCCAccept();
+
 	// Getters
 	uint16_t requestedItemId() const { return _requestedItemId; }
 	uint16_t contributedItemId() const { return _contributedItemId; }

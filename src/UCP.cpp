@@ -11,6 +11,8 @@ enum State
 	ST_WAITING_ITEM_REQUEST,
 	ST_WAITING_ITEM_CONSTRAINT,
 
+	ST_IDLE,
+
 
 
 	ST_FINISHED = 10
@@ -44,7 +46,22 @@ void UCP::update()
 		break;
 	case ST_WAITING_ITEM_CONSTRAINT:
 		break;
+	case ST_IDLE:
+	{
+		if (_mcp.get())
+		{
+			if (_mcp->NegotiationAccepted())
+			{
+				_negotiationAccepted = true;
+				setState(ST_FINISHED);
+
+				SendPacketToUCCAccept();
+			}
+		}
+		break;
+	}
 	case ST_FINISHED:
+		destroy();
 		break;
 	default:
 		break;
@@ -66,7 +83,7 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 	{
 		// TODO: Handle packets
 	case PacketType::RequestConstraint:
-		if (state() == ST_WAITING_ITEM_REQUEST)
+		if (state() == ST_WAITING_ITEM_REQUEST || state() == ST_IDLE)
 		{
 			
 			PacketConstraintRequest packetData;
@@ -118,6 +135,7 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 				}
 				else
 				{
+					setState(ST_IDLE);
 					_searchDepth += 1;
 					Node* newNode = new Node(App->agentContainer->allAgents().size());
 					_mcp = App->agentContainer->createMCP(newNode, packetData.itemId, contributedItemId(), _searchDepth);
@@ -151,6 +169,25 @@ bool UCP::SendPacketToUCC()
 	OutputMemoryStream stream;
 	packetHead.Write(stream);
 	//packetData.Write(stream);
+
+	return sendPacketToAgent(_uccLocation.hostIP, _uccLocation.hostPort, stream);
+}
+
+bool UCP::SendPacketToUCCAccept()
+{
+	// Create message header and data
+	PacketHeader packetHead;
+	packetHead.packetType = PacketType::AcceptNegotiation;
+	packetHead.srcAgentId = id();
+	packetHead.dstAgentId = _uccLocation.agentId;
+
+	PacketAcceptNegotiation packetNegot;
+	packetNegot.acceptedNegotiation = _negotiationAccepted;
+
+	// Serialize message
+	OutputMemoryStream stream;
+	packetHead.Write(stream);
+	packetNegot.Write(stream);
 
 	return sendPacketToAgent(_uccLocation.hostIP, _uccLocation.hostPort, stream);
 }
