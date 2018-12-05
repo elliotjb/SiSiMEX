@@ -62,6 +62,8 @@ void MCC::update()
 				{
 					// Negotiation Canceled -------
 					setState(ST_IDLE);
+					if (_ucc != nullptr)
+						_ucc->stop();
 				}
 			}
 		}
@@ -70,7 +72,9 @@ void MCC::update()
 		// TODO: Handle other states
 
 	case ST_FINISHED:
-		destroy();
+	{
+
+	}
 	}
 }
 
@@ -78,7 +82,7 @@ void MCC::stop()
 {
 	// Destroy hierarchy below this agent (only a UCC, actually)
 	destroyChildUCC();
-
+	destroy();
 	unregisterFromYellowPages();
 	setState(ST_FINISHED);
 }
@@ -205,4 +209,6 @@ void MCC::createChildUCC()
 void MCC::destroyChildUCC()
 {
 	// TODO: Destroy the unicast contributor child
+	if(_ucc != nullptr)
+		_ucc->stop();
 }

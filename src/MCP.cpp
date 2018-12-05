@@ -71,6 +71,11 @@ void MCP::update()
 			}
 		}
 		break;
+	case ST_NEGOTIATION_FINISHED:
+	{
+
+		break;
+	}
 
 	default:;
 	}
@@ -79,7 +84,7 @@ void MCP::update()
 void MCP::stop()
 {
 	// TODO: Destroy the underlying search hierarchy (UCP->MCP->UCP->...)
-
+	destroyChildUCP();
 	destroy();
 }
 
@@ -220,4 +225,6 @@ void MCP::createChildUCP(const AgentLocation& location)
 
 void MCP::destroyChildUCP()
 {
+	if(_ucp != nullptr)
+		_ucp->stop();
 }

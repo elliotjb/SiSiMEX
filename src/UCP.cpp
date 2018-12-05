@@ -50,18 +50,27 @@ void UCP::update()
 	{
 		if (_mcp.get())
 		{
-			if (_mcp->NegotiationAccepted())
+			if (_mcp->state() == 10)
 			{
-				_negotiationAccepted = true;
-				setState(ST_FINISHED);
+				if (_mcp->NegotiationAccepted())
+				{
+					_negotiationAccepted = true;
+					setState(ST_FINISHED);
 
-				SendPacketToUCCAccept();
+					SendPacketToUCCAccept();
+				}
+				else
+				{
+					_negotiationAccepted = false;
+					setState(ST_FINISHED);
+
+					SendPacketToUCCAccept();
+				}
 			}
 		}
 		break;
 	}
 	case ST_FINISHED:
-		destroy();
 		break;
 	default:
 		break;
@@ -71,7 +80,8 @@ void UCP::update()
 void UCP::stop()
 {
 	// TODO: Destroy search hierarchy below this agent
-
+	if(_mcp != nullptr)
+		_mcp->stop();
 	destroy();
 }
 
