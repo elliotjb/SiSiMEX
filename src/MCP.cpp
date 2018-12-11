@@ -61,13 +61,23 @@ void MCP::update()
 				{
 					// Negotiation Accepted -------
 					_negotiationAccepted = true;
+					setState(ST_NEGOTIATION_FINISHED);
 				}
 				else
 				{
-					// Negotiation Canceled -------
-					_negotiationAccepted = false;
+					if (_mccRegisterIndex < _mccRegisters.size())
+					{
+						_ucp.get()->stop();
+						_mccRegisterIndex++;
+						setState(ST_ITERATING_OVER_MCCs);
+					}
+					else
+					{
+						// Negotiation Canceled -------
+						_negotiationAccepted = false;
+						setState(ST_NEGOTIATION_FINISHED);
+					}
 				}
-				setState(ST_NEGOTIATION_FINISHED);
 			}
 		}
 		break;
