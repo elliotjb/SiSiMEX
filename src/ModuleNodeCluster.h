@@ -6,6 +6,8 @@
 #include "MCC.h"
 #include "MCP.h"
 
+typedef struct IDirect3DTexture9 *LPDIRECT3DTEXTURE9, *PDIRECT3DTEXTURE9;
+
 class ModuleNodeCluster : public Module, public TCPNetworkManagerDelegate
 {
 public:
@@ -45,6 +47,14 @@ private:
 	void spawnMCP(int nodeId, int requestedItemId, int contributedItemId);
 
 	void spawnMCC(int nodeId, int contributedItemId, int constraintItemId);
+
+
+	//
+	bool modeArmor = false;
+	bool showInitialInfo = true;
+
+	LPDIRECT3DTEXTURE9 BackgroundEmpty = nullptr;
+	LPDIRECT3DTEXTURE9 Selector = nullptr;
 
 
 

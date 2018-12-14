@@ -6,6 +6,9 @@
 #include "Packets.h"
 #include "imgui/imgui.h"
 #include <sstream>
+#include "ModuleTextures.h"
+
+#include <d3d9.h>
 
 enum State {
 	STOPPED,
@@ -24,6 +27,10 @@ bool ModuleNodeCluster::init()
 bool ModuleNodeCluster::start()
 {
 	state = STARTING;
+
+	//IMG
+	BackgroundEmpty = App->modTextures->BackgroundEmpty;
+	Selector = App->modTextures->Selector;
 
 	return true;
 }
@@ -57,7 +64,7 @@ bool ModuleNodeCluster::update()
 bool ModuleNodeCluster::updateGUI()
 {
 	ImGui::Begin("Node cluster");
-
+	ImGui::ShowDemoWindow();
 	if (state == RUNNING)
 	{
 		// Number of sockets
@@ -303,6 +310,74 @@ bool ModuleNodeCluster::updateGUI()
 
 			ImGui::EndPopup();
 		}
+
+		ImGui::End();
+
+		if (showInitialInfo)
+		{
+			ImGui::OpenPopup("showInitialInfo");
+		}
+		if (ImGui::BeginPopupModal("showInitialInfo", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Hello this is a our Project, in this project \nyou can test our system SiSiMEX.!\n\n");
+			ImGui::Text("---");
+			ImGui::Text("En esta demo, tienes 2 tipos de modos para \nprobar los diferentes tipos de intercambio.!\n\n");
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); showInitialInfo = false; }
+			ImGui::EndPopup();
+		}
+
+		ImGui::Begin("Character Menu", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Reset Application", "Ctrl + R", false, false))
+				{
+					// jeje
+				}
+				if (ImGui::MenuItem("Do nothing"))
+				{
+					// jeje
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Mode"))
+			{
+				if (ImGui::MenuItem("Mode Sender"))
+				{
+					modeArmor = false;
+				}
+				if (ImGui::MenuItem("Moder Armor"))
+				{
+					modeArmor = true;
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+		ImGui::Text("Aqui hay cosas.");
+		ImGui::Image(BackgroundEmpty, ImVec2(340, 450));
+
+
+		bool her;
+		ImGui::Selectable("Select 1", &her, 0, ImVec2(10,10)); ImGui::SameLine();
+		ImGui::Selectable("Select 2"); ImGui::SameLine();
+		ImGui::Selectable("Select 3"); 
+
+		if (ImGui::BeginMenu("MainMenu, "))
+		{
+			ImGui::Text("1.");
+			ImGui::Text("2.");
+			ImGui::Text("3.");
+			ImGui::EndMenu();
+		}
+
+
+
+		ImGui::Text("adios.");
 
 		ImGui::End();
 	}

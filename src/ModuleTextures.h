@@ -25,6 +25,8 @@ public:
 
 	// Textures
 	LPDIRECT3DTEXTURE9 banner = nullptr;
+	LPDIRECT3DTEXTURE9 BackgroundEmpty = nullptr;
+	LPDIRECT3DTEXTURE9 Selector = nullptr;
 
 
 private:

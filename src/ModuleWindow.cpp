@@ -60,7 +60,7 @@ bool ModuleWindow::init()
 	// Create application window
 	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, windowClass, NULL };
 	RegisterClassEx(&wc);
-	hwnd = CreateWindow(windowClass, windowTitle, WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, NULL, NULL, wc.hInstance, NULL);
+	hwnd = CreateWindow(windowClass, windowTitle, WS_OVERLAPPEDWINDOW, 140, 30, 1480, 900, NULL, NULL, wc.hInstance, NULL);
 
 	// Initialize Direct3D
 	LPDIRECT3D9 pD3D;
