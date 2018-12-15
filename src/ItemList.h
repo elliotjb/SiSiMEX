@@ -25,8 +25,13 @@ public:
 	void addItem(ItemId itemId);
 	void removeItem(ItemId itemId);
 
+	void UpdateItemUsed(ItemId itemId, bool newstate);
+
 	// It returns the number of items with the given Id
 	unsigned int numItemsWithId(ItemId itemId);
+
+	// It returns the number of items with the given Id
+	bool isItemsWithIdUsed(ItemId itemId);
 
 	// Returns the total number of items in the list (counting repeated items)
 	unsigned int numItems() const;
@@ -41,6 +46,7 @@ private:
 	void recomputeMissingItems();
 
 	int items[MAX_ITEMS] = {};
+	bool itemsUsed[MAX_ITEMS] = {};
 	unsigned int numberOfItems = 0;
 	unsigned int numberOfMissingItems = MAX_ITEMS;
 };

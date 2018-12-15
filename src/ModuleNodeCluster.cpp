@@ -98,15 +98,31 @@ bool ModuleNodeCluster::updateGUI()
 			{
 				for (ItemId contributedItem = 0; contributedItem < MAX_ITEMS; ++contributedItem)
 				{
-					if (node->itemList().numItemsWithId(contributedItem) > 0)
+					if (node->itemList().numItemsWithId(contributedItem) > 0 && GetTypeFromID(contributedItem) != node->GetType())
 					{
+						//int randNum = 0;
 						for (ItemId constraintItem = 0; constraintItem < MAX_ITEMS; ++constraintItem)
 						{
-							if (node->itemList().numItemsWithId(constraintItem) == 0)
+							if (node->itemList().numItemsWithId(constraintItem) == 0 /*&& GetTypeFromID(constraintItem) == node->GetType()*/)
 							{
+								//randNum++;
+								//
 								spawnMCC(node->id(), contributedItem, constraintItem);
 							}
 						}
+						//int rands = rand() % randNum + 1;
+						//int randNum2 = 0;
+						//for (ItemId constraintItem = 0; constraintItem < MAX_ITEMS; ++constraintItem)
+						//{
+						//	if (node->itemList().numItemsWithId(constraintItem) == 0)
+						//	{
+						//		randNum2++;
+						//		if (randNum2 == randNum)
+						//		{
+						//			spawnMCC(node->id(), contributedItem, constraintItem);
+						//		}
+						//	}
+						//}
 					}
 				}
 				/*for (ItemId contributedItem = 0 + 15; contributedItem < MAX_ITEMS + 15; ++contributedItem)
@@ -517,10 +533,14 @@ bool ModuleNodeCluster::updateGUI()
 				ImGui::TextUnformatted(text.c_str());
 				ImGui::EndTooltip();
 			}
+			openButton = false;
 		}
 		if (openButton)
 		{
 			spawnMCP(user_selected, requestid_current, offer_current);
+			_nodes[user_selected]->itemList().UpdateItemUsed(requestid_current, true);
+			requestid_current = -1;
+			offer_current = -1;
 		}
 		ImGui::PopStyleColor();
 
@@ -763,28 +783,39 @@ void ModuleNodeCluster::ImGui_TextIDColor(int id, int user_selected)
 		{
 			continue;
 		}
+		ImGui::Text("");
+
 		ImGui::Bullet();
-		ImGui::Text("ID Item:   "); ImGui::SameLine();
+		ImGui::Text("Item ID:   "); ImGui::SameLine();
 		if (GetTypeFromID(i) == TypeUser::AGILITY)
 		{
 			ImGui::TextColored(ImVec4(0, 1, 0, 1), std::to_string(i).c_str());
 			ImGui::Bullet();
-			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::Text("Name:      "); ImGui::SameLine();
 			ImGui::TextColored(ImVec4(0, 1, 0, 1), GetStringFromID(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Ammount:   "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), std::to_string(_nodes[user_selected]->itemList().numItemsWithId(i)).c_str());
 		}
 		if (GetTypeFromID(i) == TypeUser::FORCE)
 		{
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), std::to_string(i).c_str());
 			ImGui::Bullet();
-			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::Text("Name:      "); ImGui::SameLine();
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), GetStringFromID(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Ammount:   "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), std::to_string(_nodes[user_selected]->itemList().numItemsWithId(i)).c_str());
 		}
 		if (GetTypeFromID(i) == TypeUser::INTELLIGENCE)
 		{
 			ImGui::TextColored(ImVec4(1, 1, 0, 1), std::to_string(i).c_str());
 			ImGui::Bullet();
-			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::Text("Name:      "); ImGui::SameLine();
 			ImGui::TextColored(ImVec4(1, 1, 0, 1), GetStringFromID(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Ammount:   "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), std::to_string(_nodes[user_selected]->itemList().numItemsWithId(i)).c_str());
 		}
 		ImGui::Spacing();
 	}

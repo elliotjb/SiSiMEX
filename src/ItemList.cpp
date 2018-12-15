@@ -18,6 +18,7 @@ void ItemList::initializeComplete()
 	for (ItemId itemId = 0; itemId < MAX_ITEMS; ++itemId)
 	{
 		items[itemId] = 0;
+		itemsUsed[itemId] = false;
 	}
 	numberOfItems = MAX_ITEMS;
 	numberOfMissingItems = 0;
@@ -40,10 +41,22 @@ void ItemList::removeItem(ItemId itemId)
 	recomputeMissingItems();
 }
 
+void ItemList::UpdateItemUsed(ItemId itemId, bool newstate)
+{
+	assert(itemId < MAX_ITEMS && "ItemsList::UpdateItemUsed() - itemId out of bounds.");
+	itemsUsed[itemId] = newstate;
+}
+
 unsigned int ItemList::numItemsWithId(ItemId itemId)
 {
 	assert(itemId < MAX_ITEMS && "ItemsList::numItemsWithId() - itemId out of bounds.");
 	return items[itemId];
+}
+
+bool ItemList::isItemsWithIdUsed(ItemId itemId)
+{
+	assert(itemId < MAX_ITEMS && "ItemsList::isItemsWithIdUsed() - itemId out of bounds.");
+	return itemsUsed[itemId];
 }
 
 unsigned int ItemList::numItems() const

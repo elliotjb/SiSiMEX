@@ -65,6 +65,7 @@ void MCC::update()
 					if (_ucc != nullptr)
 						_ucc->stop();
 				}
+				node()->itemList().UpdateItemUsed(_contributedItemId, false);
 			}
 		}
 		break;
@@ -119,6 +120,21 @@ void MCC::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 
 		if(state() == ST_IDLE)
 		{
+			if (node()->itemList().isItemsWithIdUsed(_contributedItemId))
+			{
+				packetData.accepted = false;
+
+				outPacketHead.Write(outStream);
+				packetData.Write(outStream);
+				socket->SendPacket(outStream.GetBufferPtr(), outStream.GetSize());
+
+				break;
+			}
+			else
+			{
+				node()->itemList().UpdateItemUsed(_contributedItemId, true);
+			}
+
 			packetData.accepted = true;
 
 			createChildUCC();

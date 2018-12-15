@@ -117,14 +117,14 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 				packetNegot.acceptedNegotiation = _negotiationAccepted;
 
 				outPacketHead.Write(outStream);
-				packetData.Write(outStream);
+				packetNegot.Write(outStream);
 
 				socket->SendPacket(outStream.GetBufferPtr(), outStream.GetSize());
 			}
 			else
 			{
 				iLog << " - Search another Negotation: " << "Search Depth" << _searchDepth;
-				if (_searchDepth == 5)
+				if (_searchDepth == 2)
 				{
 					iLog << " - MAX SEARCH DEPTH: ";
 					setState(ST_FINISHED);
@@ -139,7 +139,7 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 					packetNegot.acceptedNegotiation = _negotiationAccepted;
 
 					outPacketHead.Write(outStream);
-					packetData.Write(outStream);
+					packetNegot.Write(outStream);
 
 					socket->SendPacket(outStream.GetBufferPtr(), outStream.GetSize());
 				}

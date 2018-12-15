@@ -42,8 +42,6 @@ void UCC::update()
 	case ST_SENDING_CONSTRAINT:
 		break;
 	case ST_FINISHED:
-		//?
-		destroy();
 		break;
 	default:
 		break;
