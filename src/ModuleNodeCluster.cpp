@@ -369,7 +369,6 @@ bool ModuleNodeCluster::updateGUI()
 		static int requestid_current = -1;
 		static int offer_current = -1;
 
-		ImGui::Text("");
 		ImGui::Text("Select a User:");
 		const char* items[] = { "Jordi", "Elliot", "Marc", "Kyra", "Jhon", "Xavier" };
 
@@ -380,7 +379,7 @@ bool ModuleNodeCluster::updateGUI()
 
 		// Info Player ------------------------
 		ImGui::Text("");
-		ImGui::Text("Info User ---------------");
+		ImGui::Text("Info User -----------------------------");
 		ImGui::TextWrapped("Name User: "); ImGui::SameLine();
 		ImGui::TextWrapped(items[user_selected]);
 		if (_nodes[user_selected]->GetType() == TypeUser::AGILITY)
@@ -406,8 +405,8 @@ bool ModuleNodeCluster::updateGUI()
 			ImGui::PopStyleColor();
 		}
 		ImGui::Text("");
-		ImGui::Text("Number of Items: ", _nodes[user_selected]->itemList().numItems());
-		ImGui::Text("ID Items: ");
+		ImGui::Text("Number of Items: "); ImGui::SameLine(); ImGui::Text(std::to_string(_nodes[user_selected]->itemList().numItems()).c_str());
+		ImGui::Text("Info Items ---------------------------- ");
 		ImGui_TextIDColor(0, user_selected);
 
 
@@ -431,14 +430,26 @@ bool ModuleNodeCluster::updateGUI()
 
 		if (ImGui::BeginPopup("SelectRequest"))
 		{
+			int numSelectables = 0;
 			for (int n = 0; n < MAX_ITEMS; n++)
 			{
 				char buf[32];
 				//std::string itemRequest = ;
 				sprintf(buf, GetStringFromID_Type(n, _nodes[user_selected]->GetType()).c_str(), n);
 				if (strcmp(buf, "Error...") != 0)
-					if (ImGui::Selectable(buf, requestid_current == n))
-						requestid_current = n;
+				{
+					if (_nodes[user_selected]->itemList().numItemsWithId(n) == 0)
+					{
+						numSelectables++;
+						if (ImGui::Selectable(buf, requestid_current == n))
+							requestid_current = n;
+					}
+				}
+			}
+			if (numSelectables == 0)
+			{
+				if (ImGui::Selectable("You can't Request more Items", requestid_current == -1, ImGuiSelectableFlags_Disabled))
+					requestid_current = -1;
 			}
 			ImGui::EndPopup();
 		}
@@ -464,14 +475,18 @@ bool ModuleNodeCluster::updateGUI()
 				char buf[32];
 				//std::string itemRequest = ;
 				sprintf(buf, GetStringFromID(n).c_str(), n);
-				if (ImGui::Selectable(buf, offer_current == n))
-					offer_current = n;
+				if (_nodes[user_selected]->itemList().numItemsWithId(n) > 0)
+				{
+					if (ImGui::Selectable(buf, offer_current == n))
+						offer_current = n;
+				}
 			}
 			ImGui::EndPopup();
 		}
-		ImGui::Text("");
-
-		ImGui::Text("adios.");
+		ImGui::Text(""); ImGui::SameLine(420);
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 0, 0, 1));
+		ImGui::Button("Spawn MCP", ImVec2(124, 40));
+		ImGui::PopStyleColor();
 
 		ImGui::End();
 	}
