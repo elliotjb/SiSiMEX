@@ -375,6 +375,7 @@ bool ModuleNodeCluster::updateGUI()
 		if (ImGui::Combo("##Users: ", &user_selected, items, IM_ARRAYSIZE(items)))
 		{
 			requestid_current = -1;
+			offer_current = -1;
 		}
 
 		// Info Player ------------------------
@@ -457,18 +458,18 @@ bool ModuleNodeCluster::updateGUI()
 		// ---------------------------------------
 		ImGui::Text("");
 		ImGui::AlignFirstTextHeightToWidgets();
-		ImGui::Text("Select a Offert: "); ImGui::SameLine();
+		ImGui::Text("Select a Offer: "); ImGui::SameLine();
 		//
-		std::string nameButton2 = "Select Offert";
+		std::string nameButton2 = "Select Offer";
 		if (offer_current != -1)
 		{
 			nameButton2 = GetStringFromID(offer_current);
 		}
 		if (ImGui::Button(nameButton2.c_str(), ImVec2(100, 20)))
-			ImGui::OpenPopup("SelectOffert");
+			ImGui::OpenPopup("SelectOffer");
 
 
-		if (ImGui::BeginPopup("SelectOffert"))
+		if (ImGui::BeginPopup("SelectOffer"))
 		{
 			for (int n = 0; n < MAX_ITEMS; n++)
 			{
@@ -485,7 +486,29 @@ bool ModuleNodeCluster::updateGUI()
 		}
 		ImGui::Text(""); ImGui::SameLine(420);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 0, 0, 1));
-		ImGui::Button("Spawn MCP", ImVec2(124, 40));
+		bool openButton = false;
+		if (ImGui::Button("Spawn MCP", ImVec2(124, 40)))
+		{
+			openButton = true;
+		}
+		if (requestid_current == -1 || offer_current == -1)
+		{
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				std::string text = "First you need select:";
+				if (requestid_current == -1)
+					text += "\n-Request item";
+				if (offer_current == -1)
+					text += "\n-Offer Item";
+				ImGui::TextUnformatted(text.c_str());
+				ImGui::EndTooltip();
+			}
+		}
+		if (openButton)
+		{
+			spawnMCP(user_selected, requestid_current, offer_current);
+		}
 		ImGui::PopStyleColor();
 
 		ImGui::End();
@@ -793,6 +816,19 @@ void ModuleNodeCluster::OnPacketReceived(TCPSocketPtr socket, InputMemoryStream 
 void ModuleNodeCluster::OnDisconnected(TCPSocketPtr socket)
 {
 	// Nothing to do
+}
+
+void ModuleNodeCluster::ShowHelpMarker(const char* desc, const char* icon)
+{
+	ImGui::TextDisabled(icon);
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(450.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }
 
 bool ModuleNodeCluster::startSystem()
