@@ -40,8 +40,8 @@ static const uint16_t NULL_AGENT_ID = 0;
 
 #if defined(RANDOM_INITIALIZATION)
 
-static const unsigned int MAX_ITEMS = 10U;
-static const unsigned int MAX_NODES = 10U;
+static const unsigned int MAX_ITEMS = 12U;
+static const unsigned int MAX_NODES = 6U;
 
 #else
 

@@ -9,6 +9,9 @@
 #include "ModuleTextures.h"
 
 #include <d3d9.h>
+#define _CRT_SECURE_NO_WARNINGS
+#pragma warning(disable:4996)
+
 
 enum State {
 	STOPPED,
@@ -93,13 +96,13 @@ bool ModuleNodeCluster::updateGUI()
 		{
 			for (NodePtr node : _nodes)
 			{
-				for (ItemId contributedItem = 0; contributedItem < MAX_ITEMS; ++contributedItem)
+				for (ItemId contributedItem = 0 + 15; contributedItem < MAX_ITEMS + 15; ++contributedItem)
 				{
 					if (node->itemList().numItemsWithId(contributedItem) > 1)
 					{
 						unsigned int numItemsToContribute = node->itemList().numItemsWithId(contributedItem) -  1;
 
-						for (ItemId constraintItem = 0; constraintItem < MAX_ITEMS; ++constraintItem)
+						for (ItemId constraintItem = 0 + 15; constraintItem < MAX_ITEMS + 15; ++constraintItem)
 						{
 							if (node->itemList().numItemsWithId(constraintItem) == 0)
 							{
@@ -358,24 +361,115 @@ bool ModuleNodeCluster::updateGUI()
 			}
 			ImGui::EndMenuBar();
 		}
-		ImGui::Text("Aqui hay cosas.");
-		ImGui::Image(BackgroundEmpty, ImVec2(340, 450));
+		ImGui::Text("Modo Manual.");
 
+		ImGui::Separator();
 
-		bool her;
-		ImGui::Selectable("Select 1", &her, 0, ImVec2(10,10)); ImGui::SameLine();
-		ImGui::Selectable("Select 2"); ImGui::SameLine();
-		ImGui::Selectable("Select 3"); 
+		static int user_selected = 0;
+		static int requestid_current = -1;
+		static int offer_current = -1;
 
-		if (ImGui::BeginMenu("MainMenu, "))
+		ImGui::Text("");
+		ImGui::Text("Select a User:");
+		const char* items[] = { "Jordi", "Elliot", "Marc", "Kyra", "Jhon", "Xavier" };
+
+		if (ImGui::Combo("##Users: ", &user_selected, items, IM_ARRAYSIZE(items)))
 		{
-			ImGui::Text("1.");
-			ImGui::Text("2.");
-			ImGui::Text("3.");
-			ImGui::EndMenu();
+			requestid_current = -1;
 		}
 
+		// Info Player ------------------------
+		ImGui::Text("");
+		ImGui::Text("Info User ---------------");
+		ImGui::TextWrapped("Name User: "); ImGui::SameLine();
+		ImGui::TextWrapped(items[user_selected]);
+		if (_nodes[user_selected]->GetType() == TypeUser::AGILITY)
+		{
+			ImGui::Text("Type User: "); ImGui::SameLine();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
+			ImGui::TextWrapped("Agility");
+			ImGui::PopStyleColor();
+		}
+		if (_nodes[user_selected]->GetType() == TypeUser::FORCE)
+		{
+			ImGui::Text("Type User: "); ImGui::SameLine();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
+			ImGui::TextWrapped("Force");
+			ImGui::PopStyleColor();
+		}
+		if (_nodes[user_selected]->GetType() == TypeUser::INTELLIGENCE)
+		{
+			ImGui::Text("Type User: "); ImGui::SameLine();
+			//ImGui::TextColored(ImVec4(0, 0, 1, 1), items[user_selected]);
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 0, 1));
+			ImGui::TextWrapped("Intelligence");
+			ImGui::PopStyleColor();
+		}
+		ImGui::Text("");
+		ImGui::Text("Number of Items: ", _nodes[user_selected]->itemList().numItems());
+		ImGui::Text("ID Items: ");
+		ImGui_TextIDColor(0, user_selected);
 
+
+
+
+
+		// --------------------------------
+		ImGui::Text("Create MultiCastPetitioner ------------------------");
+		ImGui::Text("");
+		ImGui::AlignFirstTextHeightToWidgets();
+		ImGui::Text("Select a Request: "); ImGui::SameLine();
+		//
+		std::string nameButton = "Select Item";
+		if (requestid_current != -1)
+		{
+			nameButton = GetStringFromID(requestid_current);
+		}
+		if (ImGui::Button(nameButton.c_str(), ImVec2(100, 20)))
+			ImGui::OpenPopup("SelectRequest");
+
+
+		if (ImGui::BeginPopup("SelectRequest"))
+		{
+			for (int n = 0; n < MAX_ITEMS; n++)
+			{
+				char buf[32];
+				//std::string itemRequest = ;
+				sprintf(buf, GetStringFromID_Type(n, _nodes[user_selected]->GetType()).c_str(), n);
+				if (strcmp(buf, "Error...") != 0)
+					if (ImGui::Selectable(buf, requestid_current == n))
+						requestid_current = n;
+			}
+			ImGui::EndPopup();
+		}
+
+		// ---------------------------------------
+		ImGui::Text("");
+		ImGui::AlignFirstTextHeightToWidgets();
+		ImGui::Text("Select a Offert: "); ImGui::SameLine();
+		//
+		std::string nameButton2 = "Select Offert";
+		if (offer_current != -1)
+		{
+			nameButton2 = GetStringFromID(offer_current);
+		}
+		if (ImGui::Button(nameButton2.c_str(), ImVec2(100, 20)))
+			ImGui::OpenPopup("SelectOffert");
+
+
+		if (ImGui::BeginPopup("SelectOffert"))
+		{
+			for (int n = 0; n < MAX_ITEMS; n++)
+			{
+				char buf[32];
+				//std::string itemRequest = ;
+				sprintf(buf, GetStringFromID(n).c_str(), n);
+				if (ImGui::Selectable(buf, offer_current == n))
+					offer_current = n;
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::Text("");
 
 		ImGui::Text("adios.");
 
@@ -383,6 +477,266 @@ bool ModuleNodeCluster::updateGUI()
 	}
 
 	return true;
+}
+
+int ModuleNodeCluster::GetIDFromString(std::string nameItem)
+{
+	if (nameItem == "")
+	{
+		return 0;
+	}
+	else if (nameItem == "")
+	{
+		return 1;
+	}
+	else if (nameItem == "")
+	{
+		return 2;
+	}
+	else if (nameItem == "")
+	{
+		return 3;
+	}
+	else if (nameItem == "")
+	{
+		return 4;
+	}
+	else if (nameItem == "")
+	{
+		return 5;
+	}
+	else if (nameItem == "")
+	{
+		return 6;
+	}
+	else if (nameItem == "")
+	{
+		return 7;
+	}
+	else if (nameItem == "")
+	{
+		return 8;
+	}
+	else if (nameItem == "")
+	{
+		return 9;
+	}
+	else if (nameItem == "")
+	{
+		return 10;
+	}
+	else if (nameItem == "")
+	{
+		return 11;
+	}
+	return 0;
+}
+
+std::string ModuleNodeCluster::GetStringFromID(int idItem)
+{
+	switch (idItem)
+	{
+	case 0:
+	{
+		return "itemName_0";
+		break;
+	}
+	case 1:
+	{
+		return "itemName_1";
+		break;
+	}
+	case 2:
+	{
+		return "itemName_2";
+		break;
+	}
+	case 3:
+	{
+		return "itemName_3";
+		break;
+	}
+	case 4:
+	{
+		return "itemName_4";
+		break;
+	}
+	case 5:
+	{
+		return "itemName_5";
+		break;
+	}
+	case 6:
+	{
+		return "itemName_6";
+		break;
+	}
+	case 7:
+	{
+		return "itemName_7";
+		break;
+	}
+	case 8:
+	{
+		return "itemName_8";
+		break;
+	}
+	case 9:
+	{
+		return "itemName_9";
+		break;
+	}
+	case 10:
+	{
+		return "itemName_10";
+		break;
+	}
+	case 11:
+	{
+		return "itemName_11";
+		break;
+	}
+	}
+	return "Error...";
+}
+
+std::string ModuleNodeCluster::GetStringFromID_Type(int idItem, TypeUser type)
+{
+	if (type == TypeUser::AGILITY)
+	{
+		switch (idItem)
+		{
+		case 0:
+		{
+			return "itemName_0";
+			break;
+		}
+		case 1:
+		{
+			return "itemName_1";
+			break;
+		}
+		case 2:
+		{
+			return "itemName_2";
+			break;
+		}
+		case 3:
+		{
+			return "itemName_3";
+			break;
+		}
+		}
+	}
+	if (type == TypeUser::INTELLIGENCE)
+	{
+		switch (idItem)
+		{
+		case 4:
+		{
+			return "itemName_4";
+			break;
+		}
+		case 5:
+		{
+			return "itemName_5";
+			break;
+		}
+		case 6:
+		{
+			return "itemName_6";
+			break;
+		}
+		case 7:
+		{
+			return "itemName_7";
+			break;
+		}
+		}
+	}
+	if (type == TypeUser::FORCE)
+	{
+		switch (idItem)
+		{
+		case 8:
+		{
+			return "itemName_8";
+			break;
+		}
+		case 9:
+		{
+			return "itemName_9";
+			break;
+		}
+		case 10:
+		{
+			return "itemName_10";
+			break;
+		}
+		case 11:
+		{
+			return "itemName_11";
+			break;
+		}
+		}
+	}
+	return "Error...";
+}
+
+TypeUser ModuleNodeCluster::GetTypeFromID(int idItem)
+{
+	if (idItem >= 0 && idItem <= 3)
+	{
+		return TypeUser::AGILITY;
+	}
+	if (idItem >= 4 && idItem <= 7)
+	{
+		return TypeUser::INTELLIGENCE;
+	}
+	if (idItem >= 7 && idItem <= 11)
+	{
+		return TypeUser::FORCE;
+	}
+	return TypeUser::DEFAULT;
+}
+
+void ModuleNodeCluster::ImGui_TextIDColor(int id, int user_selected)
+{
+	for (int i = 0; i < MAX_ITEMS; i++)
+	{
+		if (strcmp(GetStringFromID(_nodes[user_selected]->itemList().numItemsWithId(i)).c_str(), "Error...") == 0)
+		{
+			continue;
+		}
+		if (_nodes[user_selected]->itemList().numItemsWithId(i) == 0)
+		{
+			continue;
+		}
+		ImGui::Bullet();
+		ImGui::Text("ID Item:   "); ImGui::SameLine();
+		if (GetTypeFromID(i) == TypeUser::AGILITY)
+		{
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), std::to_string(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(0, 1, 0, 1), GetStringFromID(i).c_str());
+		}
+		if (GetTypeFromID(i) == TypeUser::FORCE)
+		{
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), std::to_string(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), GetStringFromID(i).c_str());
+		}
+		if (GetTypeFromID(i) == TypeUser::INTELLIGENCE)
+		{
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), std::to_string(i).c_str());
+			ImGui::Bullet();
+			ImGui::Text("Name Item: "); ImGui::SameLine();
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), GetStringFromID(i).c_str());
+		}
+		ImGui::Spacing();
+	}
 }
 
 bool ModuleNodeCluster::stop()
@@ -458,55 +812,85 @@ bool ModuleNodeCluster::startSystem()
 	App->networkManager->SetDelegate(this);
 	App->networkManager->AddSocket(listenSocket);
 
-#ifdef RANDOM_INITIALIZATION
+//#ifdef RANDOM_INITIALIZATION
 	// Initialize nodes
-	for (int i = 0; i < MAX_NODES; ++i)
-	{
-		// Create and intialize nodes
-		NodePtr node = std::make_shared<Node>(i);
-		node->itemList().initializeComplete();
-		_nodes.push_back(node);
-	}
+	//for (int i = 0; i < MAX_NODES; ++i)
+	//{
+	//	// Create and intialize nodes
+	//	std::string temp = "Userper_" + std::to_string(i);
+
+	//	NodePtr node = std::make_shared<Node>(i, temp, TypeUser::AGILITY);
+	//	node->itemList().initializeComplete();
+	//	_nodes.push_back(node);
+	//}
+
+	NodePtr node = std::make_shared<Node>(0, "Jordi", TypeUser::INTELLIGENCE);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
+
+	node = std::make_shared<Node>(1, "Elliot", TypeUser::FORCE);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
+
+	node = std::make_shared<Node>(2, "Marc", TypeUser::AGILITY);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
+
+	node = std::make_shared<Node>(3, "Kyra", TypeUser::FORCE);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
+
+	node = std::make_shared<Node>(4, "Jhon", TypeUser::INTELLIGENCE);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
+
+	node = std::make_shared<Node>(5, "Xavier", TypeUser::AGILITY);
+	node->itemList().initializeComplete();
+	_nodes.push_back(node);
 
 	// Randomize
-	for (int j = 0; j < MAX_ITEMS; ++j)
-	{
-		for (int i = 0; i < MAX_NODES; ++i)
-		{
-			ItemId itemId = rand() % MAX_ITEMS;
-			while (_nodes[i]->itemList().numItemsWithId(itemId) == 0) {
-				itemId = rand() % MAX_ITEMS;
-			}
-			_nodes[i]->itemList().removeItem(itemId);
-			_nodes[(i + 1) % MAX_NODES]->itemList().addItem(itemId);
-		}
-	}
-#else
-	_nodes.push_back(std::make_shared<Node>((int)_nodes.size()));
-	_nodes.push_back(std::make_shared<Node>((int)_nodes.size()));
-	_nodes.push_back(std::make_shared<Node>((int)_nodes.size()));
-	_nodes.push_back(std::make_shared<Node>((int)_nodes.size()));
-	_nodes[0]->itemList().addItem(ItemId(0));
-	_nodes[0]->itemList().addItem(ItemId(0));
-	_nodes[1]->itemList().addItem(ItemId(1));
-	_nodes[1]->itemList().addItem(ItemId(1));
-	_nodes[2]->itemList().addItem(ItemId(2));
-	_nodes[2]->itemList().addItem(ItemId(2));
-	_nodes[3]->itemList().addItem(ItemId(3));
-	_nodes[3]->itemList().addItem(ItemId(3));
+	//for (int j = 0; j < MAX_ITEMS; ++j)
+	//{
+	//	for (int i = 0; i < MAX_NODES; ++i)
+	//	{
+	//		ItemId itemId = rand() % MAX_ITEMS;
+	//		while (_nodes[i]->itemList().numItemsWithId(itemId) == 0) {
+	//			itemId = rand() % MAX_ITEMS;
+	//		}
+	//		_nodes[i]->itemList().removeItem(itemId);
+	//		_nodes[(i + 1) % MAX_NODES]->itemList().addItem(itemId);
+	//	}
+	//}
+/*#else
+#endif*/
 
-	// Defines to clarify the next lines
-#	define NODE(x) x
-#	define CONTRIBUTION(x) x
-#	define CONSTRAINT(x) x
+	//NodePtr node = std::make_shared<Node>(0);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
 
-	spawnMCC(NODE(1), CONTRIBUTION(1), CONSTRAINT(2)); // Node 1 offers 1 but wants 2
-	spawnMCC(NODE(2), CONTRIBUTION(2), CONSTRAINT(3)); // Node 2 offers 2 but wants 3
-	spawnMCC(NODE(3), CONTRIBUTION(3), CONSTRAINT(0)); // Node 3 offers 3 but wants 0
+	//NodePtr node = std::make_shared<Node>(1);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
 
-	//spawnMCC(0, 0); // Node 0 offers 0
-	//spawnMCP(0, 1); // Node 0 wants  1
-#endif
+	//NodePtr node = std::make_shared<Node>(2);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
+
+	//NodePtr node = std::make_shared<Node>(3);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
+
+	//NodePtr node = std::make_shared<Node>(4);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
+
+	//NodePtr node = std::make_shared<Node>(5);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
+
+	//NodePtr node = std::make_shared<Node>(6);
+	//node->itemList().initializeComplete();
+	//_nodes.push_back(node);
 
 	return true;
 }

@@ -35,6 +35,13 @@ public:
 
 	void OnDisconnected(TCPSocketPtr socket) override;
 
+	int GetIDFromString(std::string nameItem);
+	std::string GetStringFromID(int idItem);
+	std::string GetStringFromID_Type(int idItem, TypeUser type);
+	TypeUser GetTypeFromID(int idItem);
+
+	void ImGui_TextIDColor(int id, int user_selected);
+
 private:
 
 	bool startSystem();
