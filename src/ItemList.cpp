@@ -17,7 +17,7 @@ void ItemList::initializeComplete()
 {
 	for (ItemId itemId = 0; itemId < MAX_ITEMS; ++itemId)
 	{
-		items[itemId] = 1;
+		items[itemId] = 0;
 	}
 	numberOfItems = MAX_ITEMS;
 	numberOfMissingItems = 0;

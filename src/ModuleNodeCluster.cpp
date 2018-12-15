@@ -96,7 +96,20 @@ bool ModuleNodeCluster::updateGUI()
 		{
 			for (NodePtr node : _nodes)
 			{
-				for (ItemId contributedItem = 0 + 15; contributedItem < MAX_ITEMS + 15; ++contributedItem)
+				for (ItemId contributedItem = 0; contributedItem < MAX_ITEMS; ++contributedItem)
+				{
+					if (node->itemList().numItemsWithId(contributedItem) > 0)
+					{
+						for (ItemId constraintItem = 0; constraintItem < MAX_ITEMS; ++constraintItem)
+						{
+							if (node->itemList().numItemsWithId(constraintItem) == 0)
+							{
+								spawnMCC(node->id(), contributedItem, constraintItem);
+							}
+						}
+					}
+				}
+				/*for (ItemId contributedItem = 0 + 15; contributedItem < MAX_ITEMS + 15; ++contributedItem)
 				{
 					if (node->itemList().numItemsWithId(contributedItem) > 1)
 					{
@@ -113,7 +126,7 @@ bool ModuleNodeCluster::updateGUI()
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 
@@ -519,51 +532,51 @@ bool ModuleNodeCluster::updateGUI()
 
 int ModuleNodeCluster::GetIDFromString(std::string nameItem)
 {
-	if (nameItem == "")
+	if (nameItem == "Uliana's Spirit")
 	{
 		return 0;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Uliana's Heart")
 	{
 		return 1;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Uliana's Fury")
 	{
 		return 2;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Uliana's Destiny")
 	{
 		return 3;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Pestilence Mask")
 	{
 		return 4;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Pestilence Defense")
 	{
 		return 5;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Pestilence Incantations")
 	{
 		return 6;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Pestilence Boots")
 	{
 		return 7;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Crown of the Light")
 	{
 		return 8;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Heart of the Light")
 	{
 		return 9;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Towers of the Light")
 	{
 		return 10;
 	}
-	else if (nameItem == "")
+	else if (nameItem == "Foundation of the Light")
 	{
 		return 11;
 	}
@@ -576,62 +589,62 @@ std::string ModuleNodeCluster::GetStringFromID(int idItem)
 	{
 	case 0:
 	{
-		return "itemName_0";
+		return "Uliana's Spirit";
 		break;
 	}
 	case 1:
 	{
-		return "itemName_1";
+		return "Uliana's Heart";
 		break;
 	}
 	case 2:
 	{
-		return "itemName_2";
+		return "Uliana's Fury";
 		break;
 	}
 	case 3:
 	{
-		return "itemName_3";
+		return "Uliana's Destiny";
 		break;
 	}
 	case 4:
 	{
-		return "itemName_4";
+		return "Pestilence Mask";
 		break;
 	}
 	case 5:
 	{
-		return "itemName_5";
+		return "Pestilence Defense";
 		break;
 	}
 	case 6:
 	{
-		return "itemName_6";
+		return "Pestilence Incantations";
 		break;
 	}
 	case 7:
 	{
-		return "itemName_7";
+		return "Pestilence Boots";
 		break;
 	}
 	case 8:
 	{
-		return "itemName_8";
+		return "Crown of the Light";
 		break;
 	}
 	case 9:
 	{
-		return "itemName_9";
+		return "Heart of the Light";
 		break;
 	}
 	case 10:
 	{
-		return "itemName_10";
+		return "Towers of the Light";
 		break;
 	}
 	case 11:
 	{
-		return "itemName_11";
+		return "Foundation of the Light";
 		break;
 	}
 	}
@@ -646,22 +659,22 @@ std::string ModuleNodeCluster::GetStringFromID_Type(int idItem, TypeUser type)
 		{
 		case 0:
 		{
-			return "itemName_0";
+			return "Uliana's Spirit";
 			break;
 		}
 		case 1:
 		{
-			return "itemName_1";
+			return "Uliana's Heart";
 			break;
 		}
 		case 2:
 		{
-			return "itemName_2";
+			return "Uliana's Fury";
 			break;
 		}
 		case 3:
 		{
-			return "itemName_3";
+			return "Uliana's Destiny";
 			break;
 		}
 		}
@@ -672,22 +685,22 @@ std::string ModuleNodeCluster::GetStringFromID_Type(int idItem, TypeUser type)
 		{
 		case 4:
 		{
-			return "itemName_4";
+			return "Pestilence Mask";
 			break;
 		}
 		case 5:
 		{
-			return "itemName_5";
+			return "Pestilence Defense";
 			break;
 		}
 		case 6:
 		{
-			return "itemName_6";
+			return "Pestilence Incantations";
 			break;
 		}
 		case 7:
 		{
-			return "itemName_7";
+			return "Pestilence Boots";
 			break;
 		}
 		}
@@ -698,22 +711,22 @@ std::string ModuleNodeCluster::GetStringFromID_Type(int idItem, TypeUser type)
 		{
 		case 8:
 		{
-			return "itemName_8";
+			return "Crown of the Light";
 			break;
 		}
 		case 9:
 		{
-			return "itemName_9";
+			return "Heart of the Light";
 			break;
 		}
 		case 10:
 		{
-			return "itemName_10";
+			return "Towers of the Light";
 			break;
 		}
 		case 11:
 		{
-			return "itemName_11";
+			return "Foundation of the Light";
 			break;
 		}
 		}
@@ -878,26 +891,73 @@ bool ModuleNodeCluster::startSystem()
 	NodePtr node = std::make_shared<Node>(0, "Jordi", TypeUser::INTELLIGENCE);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(0);
+	node->itemList().addItem(2);
+	node->itemList().addItem(3);
+	node->itemList().addItem(5);
+	node->itemList().addItem(7);
+	node->itemList().addItem(8);
+	node->itemList().addItem(10);
+	node->itemList().addItem(11);
 
 	node = std::make_shared<Node>(1, "Elliot", TypeUser::FORCE);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(0);
+	node->itemList().addItem(1);
+	node->itemList().addItem(2);
+	node->itemList().addItem(4);
+	node->itemList().addItem(6);
+	node->itemList().addItem(7);
+	node->itemList().addItem(10);
+
 
 	node = std::make_shared<Node>(2, "Marc", TypeUser::AGILITY);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(1);
+	node->itemList().addItem(3);
+	node->itemList().addItem(4);
+	node->itemList().addItem(5);
+	node->itemList().addItem(7);
+	node->itemList().addItem(9);
+	node->itemList().addItem(11);
+
 
 	node = std::make_shared<Node>(3, "Kyra", TypeUser::FORCE);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(0);
+	node->itemList().addItem(1);
+	node->itemList().addItem(3);
+	node->itemList().addItem(4);
+	node->itemList().addItem(6);
+	node->itemList().addItem(7);
+	node->itemList().addItem(8);
+	node->itemList().addItem(11);
 
 	node = std::make_shared<Node>(4, "Jhon", TypeUser::INTELLIGENCE);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(0);
+	node->itemList().addItem(1);
+	node->itemList().addItem(2);
+	node->itemList().addItem(3);
+	node->itemList().addItem(5);
+	node->itemList().addItem(8);
+	node->itemList().addItem(9);
+	node->itemList().addItem(10);
 
 	node = std::make_shared<Node>(5, "Xavier", TypeUser::AGILITY);
 	node->itemList().initializeComplete();
 	_nodes.push_back(node);
+	node->itemList().addItem(2);
+	node->itemList().addItem(4);
+	node->itemList().addItem(5);
+	node->itemList().addItem(6);
+	node->itemList().addItem(9);
+	node->itemList().addItem(10);
+	node->itemList().addItem(11);
 
 	// Randomize
 	//for (int j = 0; j < MAX_ITEMS; ++j)
@@ -1003,7 +1063,8 @@ void ModuleNodeCluster::runSystem()
 		{
 			int numContributedItems = node->itemList().numItemsWithId(mcc->contributedItemId());
 			int numRequestedItems = node->itemList().numItemsWithId(mcc->constraintItemId());
-			if (numContributedItems < 2 || numRequestedItems > 0) { // if the contributed is not repeated at least once... or we already got the constraint
+			if (numContributedItems < 1 || numRequestedItems > 0) 
+			{ // if the contributed is not repeated at least once... or we already got the constraint
 				mcc->stop();
 			}
 		}
