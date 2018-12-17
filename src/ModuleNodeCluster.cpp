@@ -251,6 +251,12 @@ bool ModuleNodeCluster::updateGUI()
 		for (auto nodeIndex = 0U; nodeIndex < _nodes.size(); ++nodeIndex)
 		{
 			ImGui::Text("Node %02u ", nodeIndex);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::TextUnformatted(_nodes[nodeIndex]->GetName().c_str());
+				ImGui::EndTooltip();
+			}
 			ImGui::SameLine();
 
 			for (ItemId itemId = 0U; itemId < MAX_ITEMS; ++itemId)
@@ -438,7 +444,7 @@ bool ModuleNodeCluster::updateGUI()
 		ImGui::Text("Number of Items: "); ImGui::SameLine(); ImGui::Text(std::to_string(_nodes[user_selected]->itemList().numItems()).c_str());
 		ImGui::Text("Info Items ---------------------------- ");
 		ImGui_TextIDColor(0, user_selected);
-
+		ImGui::Separator();
 
 
 
@@ -783,7 +789,8 @@ void ModuleNodeCluster::ImGui_TextIDColor(int id, int user_selected)
 		{
 			continue;
 		}
-		ImGui::Text("");
+		//ImGui::Text("");
+		ImGui::Separator();
 
 		ImGui::Bullet();
 		ImGui::Text("Item ID:   "); ImGui::SameLine();
