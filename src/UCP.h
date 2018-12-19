@@ -11,7 +11,7 @@ class UCP :
 public:
 
 	// Constructor and destructor
-	UCP(Node *node, uint16_t requestedItemId, uint16_t contributedItemId, const AgentLocation &uccLoc, unsigned int searchDepth);
+	UCP(Node *node, uint16_t requestedItemId, uint16_t contributedItemId, const AgentLocation &uccLoc, unsigned int searchDepth, unsigned int totalSearch);
 	~UCP();
 
 	// Agent methods
@@ -33,6 +33,7 @@ private:
 	uint16_t _requestedItemId;
 	uint16_t _contributedItemId;
 	unsigned int _searchDepth;
+	unsigned int _totalSearch;
 
 	bool _negotiationAccepted;
 

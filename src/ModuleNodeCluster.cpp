@@ -125,24 +125,6 @@ bool ModuleNodeCluster::updateGUI()
 						//}
 					}
 				}
-				/*for (ItemId contributedItem = 0 + 15; contributedItem < MAX_ITEMS + 15; ++contributedItem)
-				{
-					if (node->itemList().numItemsWithId(contributedItem) > 1)
-					{
-						unsigned int numItemsToContribute = node->itemList().numItemsWithId(contributedItem) -  1;
-
-						for (ItemId constraintItem = 0 + 15; constraintItem < MAX_ITEMS + 15; ++constraintItem)
-						{
-							if (node->itemList().numItemsWithId(constraintItem) == 0)
-							{
-								for (unsigned int i = 0; i < numItemsToContribute; ++i)
-								{
-									spawnMCC(node->id(), contributedItem, constraintItem);
-								}
-							}
-						}
-					}
-				}*/
 			}
 		}
 
@@ -357,47 +339,16 @@ bool ModuleNodeCluster::updateGUI()
 		}
 		if (ImGui::BeginPopupModal("showInitialInfo", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Text("Hello this is a our Project, in this project \nyou can test our system SiSiMEX.!\n\n");
+			ImGui::Text("Hello this is a our Project, in this project \nyou can test our SiSiMEX project!\n\n");
 			ImGui::Text("---");
-			ImGui::Text("En esta demo, tienes 2 tipos de modos para \nprobar los diferentes tipos de intercambio.!\n\n");
+			ImGui::Text("In this demo, you have different players\nto make interchanges between them.\nEach player has his own type (Agility/Power/Intelligence)\nand the objective is to complete the specific armor set.\nLet's go and try it!\n\n");
 			ImGui::Separator();
 
 			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); showInitialInfo = false; }
 			ImGui::EndPopup();
 		}
 
-		ImGui::Begin("Character Menu", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse);
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("Edit"))
-			{
-				if (ImGui::MenuItem("Reset Application", "Ctrl + R", false, false))
-				{
-					// jeje
-				}
-				if (ImGui::MenuItem("Do nothing"))
-				{
-					// jeje
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Mode"))
-			{
-				if (ImGui::MenuItem("Mode Sender"))
-				{
-					modeArmor = false;
-				}
-				if (ImGui::MenuItem("Moder Armor"))
-				{
-					modeArmor = true;
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-		ImGui::Text("Modo Manual.");
-
+		ImGui::Begin("Character Menu", nullptr, ImGuiWindowFlags_NoCollapse);
 		ImGui::Separator();
 
 		static int user_selected = 0;
@@ -415,34 +366,55 @@ bool ModuleNodeCluster::updateGUI()
 
 		// Info Player ------------------------
 		ImGui::Text("");
-		ImGui::Text("Info User -----------------------------");
-		ImGui::TextWrapped("Name User: "); ImGui::SameLine();
+		ImGui::Text("User Info -----------------------------");
+		ImGui::TextWrapped("User Name: "); ImGui::SameLine();
 		ImGui::TextWrapped(items[user_selected]);
 		if (_nodes[user_selected]->GetType() == TypeUser::AGILITY)
 		{
-			ImGui::Text("Type User: "); ImGui::SameLine();
+			ImGui::Text("User Type: "); ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0, 1, 0, 1));
 			ImGui::TextWrapped("Agility");
 			ImGui::PopStyleColor();
 		}
 		if (_nodes[user_selected]->GetType() == TypeUser::FORCE)
 		{
-			ImGui::Text("Type User: "); ImGui::SameLine();
+			ImGui::Text("User Type: "); ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 0, 0, 1));
-			ImGui::TextWrapped("Force");
+			ImGui::TextWrapped("Power");
 			ImGui::PopStyleColor();
 		}
 		if (_nodes[user_selected]->GetType() == TypeUser::INTELLIGENCE)
 		{
-			ImGui::Text("Type User: "); ImGui::SameLine();
+			ImGui::Text("User Type: "); ImGui::SameLine();
 			//ImGui::TextColored(ImVec4(0, 0, 1, 1), items[user_selected]);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 0, 1));
 			ImGui::TextWrapped("Intelligence");
 			ImGui::PopStyleColor();
 		}
+		ImGui::TextWrapped("Armor Status: "); ImGui::SameLine();
+		int numSelectablesSameType = 0;
+		for (int n = 0; n < MAX_ITEMS; n++)
+		{
+			char buf[32];
+			sprintf(buf, GetStringFromID_Type(n, _nodes[user_selected]->GetType()).c_str(), n);
+			if (strcmp(buf, "Error...") != 0)
+			{
+				if (_nodes[user_selected]->itemList().numItemsWithId(n) == 0)
+				{
+					numSelectablesSameType++;
+				}
+			}
+		}
+		if (numSelectablesSameType == 0)
+		{
+			ImGui::TextColored(ImVec4(0.015, 0.77, 1, 1), "Completed");
+		}
+		else
+		{
+			ImGui::TextColored(ImVec4(1, 0.603, 0, 1), "Uncompleted");
+		}
 		ImGui::Text("");
-		ImGui::Text("Number of Items: "); ImGui::SameLine(); ImGui::Text(std::to_string(_nodes[user_selected]->itemList().numItems()).c_str());
-		ImGui::Text("Info Items ---------------------------- ");
+		ImGui::Text("Items Info ---------------------------- ");
 		ImGui_TextIDColor(0, user_selected);
 		ImGui::Separator();
 
@@ -450,7 +422,7 @@ bool ModuleNodeCluster::updateGUI()
 
 
 		// --------------------------------
-		ImGui::Text("Create MultiCastPetitioner ------------------------");
+		ImGui::Text("Create MultiCast Petitioner ------------------------");
 		ImGui::Text("");
 		ImGui::AlignFirstTextHeightToWidgets();
 		ImGui::Text("Select a Request: "); ImGui::SameLine();
@@ -460,7 +432,7 @@ bool ModuleNodeCluster::updateGUI()
 		{
 			nameButton = GetStringFromID(requestid_current);
 		}
-		if (ImGui::Button(nameButton.c_str(), ImVec2(100, 20)))
+		if (ImGui::Button(nameButton.c_str(), ImVec2(200, 20)))
 			ImGui::OpenPopup("SelectRequest");
 
 
@@ -500,7 +472,7 @@ bool ModuleNodeCluster::updateGUI()
 		{
 			nameButton2 = GetStringFromID(offer_current);
 		}
-		if (ImGui::Button(nameButton2.c_str(), ImVec2(100, 20)))
+		if (ImGui::Button(nameButton2.c_str(), ImVec2(200, 20)))
 			ImGui::OpenPopup("SelectOffer");
 
 
@@ -531,7 +503,7 @@ bool ModuleNodeCluster::updateGUI()
 			if (ImGui::IsItemHovered())
 			{
 				ImGui::BeginTooltip();
-				std::string text = "First you need select:";
+				std::string text = "First you need to select:";
 				if (requestid_current == -1)
 					text += "\n-Request item";
 				if (offer_current == -1)
@@ -914,17 +886,6 @@ bool ModuleNodeCluster::startSystem()
 	App->networkManager->SetDelegate(this);
 	App->networkManager->AddSocket(listenSocket);
 
-//#ifdef RANDOM_INITIALIZATION
-	// Initialize nodes
-	//for (int i = 0; i < MAX_NODES; ++i)
-	//{
-	//	// Create and intialize nodes
-	//	std::string temp = "Userper_" + std::to_string(i);
-
-	//	NodePtr node = std::make_shared<Node>(i, temp, TypeUser::AGILITY);
-	//	node->itemList().initializeComplete();
-	//	_nodes.push_back(node);
-	//}
 
 	NodePtr node = std::make_shared<Node>(0, "Jordi", TypeUser::INTELLIGENCE);
 	node->itemList().initializeComplete();
@@ -997,50 +958,6 @@ bool ModuleNodeCluster::startSystem()
 	node->itemList().addItem(10);
 	node->itemList().addItem(11);
 
-	// Randomize
-	//for (int j = 0; j < MAX_ITEMS; ++j)
-	//{
-	//	for (int i = 0; i < MAX_NODES; ++i)
-	//	{
-	//		ItemId itemId = rand() % MAX_ITEMS;
-	//		while (_nodes[i]->itemList().numItemsWithId(itemId) == 0) {
-	//			itemId = rand() % MAX_ITEMS;
-	//		}
-	//		_nodes[i]->itemList().removeItem(itemId);
-	//		_nodes[(i + 1) % MAX_NODES]->itemList().addItem(itemId);
-	//	}
-	//}
-/*#else
-#endif*/
-
-	//NodePtr node = std::make_shared<Node>(0);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(1);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(2);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(3);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(4);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(5);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
-	//NodePtr node = std::make_shared<Node>(6);
-	//node->itemList().initializeComplete();
-	//_nodes.push_back(node);
-
 	return true;
 }
 
@@ -1059,7 +976,8 @@ void ModuleNodeCluster::runSystem()
 			node->itemList().removeItem(mcc->contributedItemId());
 			node->itemList().addItem(mcc->constraintItemId());
 			mcc->stop();
-			iLog << "MCC exchange at Node " << node->id() << ":"
+			iLog << "MCC exchange at Node " << node->id() << " ("
+				<< node->GetName() << ") :"
 				<< " -" << mcc->contributedItemId()
 				<< " +" << mcc->constraintItemId();
 		}
@@ -1074,13 +992,14 @@ void ModuleNodeCluster::runSystem()
 			{
 				node->itemList().addItem(mcp->requestedItemId());
 				node->itemList().removeItem(mcp->contributedItemId());
-				iLog << "MCP exchange at Node " << node->id() << ":"
+				iLog << "MCP exchange at Node " << node->id() << " ("
+					<< node->GetName() << ") :"
 					<< " -" << mcp->contributedItemId()
 					<< " +" << mcp->requestedItemId();
 			}
 			else
 			{
-				wLog << "MCP exchange at Node " << node->id() << " not found:"
+				wLog << "MCP exchange at Node " << node->id() << " (" << node->GetName() << ") not found:"
 					<< " -" << mcp->contributedItemId()
 					<< " +" << mcp->requestedItemId();
 			}
@@ -1118,7 +1037,7 @@ void ModuleNodeCluster::spawnMCP(int nodeId, int requestedItemId, int contribute
 	dLog << "Spawn MCP - node " << nodeId << " - req. " << requestedItemId << " - contrib. " << contributedItemId;
 	if (nodeId >= 0 && nodeId < (int)_nodes.size()) {
 		NodePtr node = _nodes[nodeId];
-		App->agentContainer->createMCP(node.get(), requestedItemId, contributedItemId, 0);
+		App->agentContainer->createMCP(node.get(), requestedItemId, contributedItemId, 0, 0);
 	}
 	else {
 		wLog << "Could not find node with ID " << nodeId;

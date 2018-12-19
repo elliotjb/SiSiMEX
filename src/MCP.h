@@ -11,7 +11,7 @@ class MCP :
 public:
 
 	// Constructor and destructor
-	MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsigned int searchDepth);
+	MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsigned int searchDepth, unsigned int totalSearch);
 	~MCP();
 
 	// Agent methods
@@ -34,6 +34,7 @@ public:
 
 	// It returns the search depth of this MCP
 	unsigned int searchDepth() const { return _searchDepth; }
+	unsigned int totalSearch() const { return _totalSearch; }
 	bool NegotiationAccepted() const { return _negotiationAccepted; }
 
 private:
@@ -51,6 +52,7 @@ private:
 	std::vector<AgentLocation> _mccRegisters; /**< MCCs returned by the YP. */
 
 	unsigned int _searchDepth;
+	unsigned int _totalSearch;
 
 	bool _negotiationAccepted;
 

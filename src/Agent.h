@@ -12,6 +12,8 @@ class MCP;
 class UCC;
 class UCP;
 
+#define MAX_SEARCH 30
+
 
 class Agent
 {

@@ -17,11 +17,12 @@ enum State
 	ST_NEGOTIATION_FINISHED = 10
 };
 
-MCP::MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsigned int searchDepth) :
+MCP::MCP(Node *node, uint16_t requestedItemID, uint16_t contributedItemID, unsigned int searchDepth, unsigned int totalSearch) :
 	Agent(node),
 	_requestedItemId(requestedItemID),
 	_contributedItemId(contributedItemID),
-	_searchDepth(searchDepth)
+	_searchDepth(searchDepth),
+	_totalSearch(totalSearch)
 {
 	setState(ST_INIT);
 	_negotiationAccepted = false;
@@ -65,10 +66,11 @@ void MCP::update()
 				}
 				else
 				{
-					if (_mccRegisterIndex < _mccRegisters.size())
+					if (_mccRegisterIndex < _mccRegisters.size() && _totalSearch < MAX_SEARCH)
 					{
 						_ucp.get()->stop();
 						_mccRegisterIndex++;
+						_totalSearch++;
 						setState(ST_ITERATING_OVER_MCCs);
 					}
 					else
@@ -150,12 +152,13 @@ void MCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 			if (packetData.accepted)
 			{
 				iLog << " - MPC: (" << id() << ") connected with MCC: (" << packetHeader.srcAgentId << ")";
-
+				_totalSearch++;
 				createChildUCP(packetData.uccLocation);
 				setState(ST_NEGOTIATING);
 			}
 			else
 			{
+				_totalSearch++;
 				// MCP "BUSY".
 				_mccRegisterIndex++;
 				setState(ST_ITERATING_OVER_MCCs);
@@ -230,7 +233,7 @@ void MCP::createChildUCP(const AgentLocation& location)
 {
 	//UCP CREATION
 	Node* newNode = new Node(App->agentContainer->allAgents().size());
-	_ucp = App->agentContainer->createUCP(newNode, requestedItemId(), contributedItemId(), location, searchDepth());
+	_ucp = App->agentContainer->createUCP(newNode, requestedItemId(), contributedItemId(), location, searchDepth(), totalSearch());
 }
 
 void MCP::destroyChildUCP()

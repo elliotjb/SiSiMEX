@@ -18,11 +18,12 @@ enum State
 	ST_FINISHED = 10
 };
 
-UCP::UCP(Node *node, uint16_t requestedItemId, uint16_t contributedItemId, const AgentLocation &uccLocation, unsigned int searchDepth) :
+UCP::UCP(Node *node, uint16_t requestedItemId, uint16_t contributedItemId, const AgentLocation &uccLocation, unsigned int searchDepth, unsigned int totalSearch) :
 	Agent(node),
 	_requestedItemId(requestedItemId),
 	_contributedItemId(contributedItemId),
-	_searchDepth(searchDepth)
+	_searchDepth(searchDepth),
+	_totalSearch(totalSearch)
 {
 	// TODO: Save input parameters
 	_uccLocation = uccLocation;
@@ -124,7 +125,26 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 			else
 			{
 				iLog << " - Search another Negotation: " << "Search Depth" << _searchDepth;
-				if (_searchDepth == 2)
+				if (_totalSearch >= MAX_SEARCH)
+				{
+					iLog << " - STOP SEARCH: ";
+					setState(ST_FINISHED);
+					PacketHeader outPacketHead;
+					PacketAcceptNegotiation packetNegot;
+					OutputMemoryStream outStream;
+
+					outPacketHead.packetType = PacketType::AcceptNegotiation;
+					outPacketHead.srcAgentId = id();
+					outPacketHead.dstAgentId = packetHeader.srcAgentId;
+
+					packetNegot.acceptedNegotiation = _negotiationAccepted;
+
+					outPacketHead.Write(outStream);
+					packetNegot.Write(outStream);
+
+					socket->SendPacket(outStream.GetBufferPtr(), outStream.GetSize());
+				}
+				else if (_searchDepth == 3)
 				{
 					iLog << " - MAX SEARCH DEPTH: ";
 					setState(ST_FINISHED);
@@ -148,7 +168,7 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 					setState(ST_IDLE);
 					_searchDepth += 1;
 					Node* newNode = new Node(App->agentContainer->allAgents().size());
-					_mcp = App->agentContainer->createMCP(newNode, packetData.itemId, contributedItemId(), _searchDepth);
+					_mcp = App->agentContainer->createMCP(newNode, packetData.itemId, contributedItemId(), _searchDepth, _totalSearch);
 				}
 			}
 
