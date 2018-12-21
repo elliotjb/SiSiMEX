@@ -25,8 +25,8 @@ enum class PacketType
 	
 	// UCP <-> UCC
 	// TODO
-	RequestItem,
 	RequestConstraint,
+	RequestConstraintResponse,
 	AcceptNegotiation,
 
 	Last
@@ -162,7 +162,6 @@ public:
 		stream.Write(acceptedNegotiation);
 	}
 };
-using PacketItemRequest = PacketRegisterMCC;
 
-using PacketConstraintRequest = PacketRegisterMCC;
+using PacketConstraintResponse = PacketRegisterMCC;
 

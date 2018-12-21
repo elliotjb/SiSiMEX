@@ -93,13 +93,11 @@ void UCP::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 	switch (packetType)
 	{
 		// TODO: Handle packets
-	case PacketType::RequestConstraint:
+	case PacketType::RequestConstraintResponse:
 		if (state() == ST_WAITING_ITEM_REQUEST || state() == ST_IDLE)
-		{
-			
-			PacketConstraintRequest packetData;
+		{		
+			PacketConstraintResponse packetData;
 			packetData.Read(stream);
-
 
 			if (packetData.itemId == contributedItemId())
 			{
@@ -188,17 +186,13 @@ bool UCP::SendPacketToUCC()
 {
 	// Create message header and data
 	PacketHeader packetHead;
-	packetHead.packetType = PacketType::RequestItem;
+	packetHead.packetType = PacketType::RequestConstraint;
 	packetHead.srcAgentId = id();
 	packetHead.dstAgentId = _uccLocation.agentId;
-
-	//PacketItemRequest packetData;
-	//packetData.itemId = requestedItemId();
 
 	// Serialize message
 	OutputMemoryStream stream;
 	packetHead.Write(stream);
-	//packetData.Write(stream);
 
 	return sendPacketToAgent(_uccLocation.hostIP, _uccLocation.hostPort, stream);
 }

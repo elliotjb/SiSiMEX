@@ -60,18 +60,17 @@ void UCC::OnPacketReceived(TCPSocketPtr socket, const PacketHeader &packetHeader
 	switch (packetType)
 	{
 		// TODO: Handle packets
-	case PacketType::RequestItem:
+	case PacketType::RequestConstraint:
 		if (state() == ST_IDLE)
 		{
-
 			// Create message header and data
 			PacketHeader packetHead;
-			packetHead.packetType = PacketType::RequestConstraint;
+			packetHead.packetType = PacketType::RequestConstraintResponse;
 			packetHead.srcAgentId = id();
 			packetHead.dstAgentId = packetHeader.srcAgentId;
 
 			//PacketItemRequest packetData;
-			PacketConstraintRequest packetData;
+			PacketConstraintResponse packetData;
 			packetData.itemId = constraintItemId();
 
 			// Serialize message
