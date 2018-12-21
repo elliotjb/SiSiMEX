@@ -215,11 +215,27 @@ bool ModuleNodeCluster::updateGUI()
 		static int comboItem = 0;
 
 		ImGui::Text("Item ID ");
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 0.5f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+
 		for (ItemId itemId = 0U; itemId < MAX_ITEMS; ++itemId)
 		{
+			if (itemId == 4)
+			{
+				ImGui::PopStyleColor(3);
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 0.0f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+			}
+			else if (itemId == 8)
+			{
+				ImGui::PopStyleColor(3);
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.6f, 1.0f, 0.5f));
+			}
+
 			ImGui::SameLine();
 			std::ostringstream oss;
 			oss << itemId;
@@ -253,9 +269,9 @@ bool ModuleNodeCluster::updateGUI()
 				}
 				else
 				{
-					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 0.5f*numItems));
-					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, 1.0f, 0.0f, 0.3f*numItems));
-					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, 1.0f, 0.0f, 0.2f*numItems));
+					ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 1.0f, 0.5f*numItems));
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, 1.0f, 1.0f, 0.3f*numItems));
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, 1.0f, 1.0f, 0.2f*numItems));
 				}
 
 				const int buttonId = nodeIndex * MAX_ITEMS + itemId;
@@ -386,7 +402,6 @@ bool ModuleNodeCluster::updateGUI()
 		if (_nodes[user_selected]->GetType() == TypeUser::INTELLIGENCE)
 		{
 			ImGui::Text("User Type: "); ImGui::SameLine();
-			//ImGui::TextColored(ImVec4(0, 0, 1, 1), items[user_selected]);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 0, 1));
 			ImGui::TextWrapped("Intelligence");
 			ImGui::PopStyleColor();
@@ -481,7 +496,6 @@ bool ModuleNodeCluster::updateGUI()
 			for (int n = 0; n < MAX_ITEMS; n++)
 			{
 				char buf[32];
-				//std::string itemRequest = ;
 				sprintf(buf, GetStringFromID(n).c_str(), n);
 				if (_nodes[user_selected]->itemList().numItemsWithId(n) > 0)
 				{
